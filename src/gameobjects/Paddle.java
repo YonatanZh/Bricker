@@ -1,2 +1,6 @@
-package gameobjects;public class Paddle {
+package gameobjects;
+
+public class Paddle {
+
+
 }
