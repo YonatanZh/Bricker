@@ -162,23 +162,26 @@ public class BrickerGameManager extends GameManager {
     private void checkPaddleWallCollision() {
         for (GameObject obj : gameObjects().objectsInLayer(Layer.DEFAULT)) {
             if (obj instanceof Paddle) {
-                if (obj.getTopLeftCorner().x() < 0) {
-                    obj.setTopLeftCorner(new Vector2(0, obj.getTopLeftCorner().y()));
-                } else if ((obj.getTopLeftCorner().x() >
-                        (windowDimensions.x() - obj.getDimensions().x()))) {
-                    obj.setTopLeftCorner(new Vector2(windowDimensions.x() - obj.getDimensions().x(),
-                            obj.getTopLeftCorner().y()));
-                }
+                float x = obj.getTopLeftCorner().x();
+                float maxX = windowDimensions.x() - obj.getDimensions().x();
+
+                obj.setTopLeftCorner(new Vector2(Math.max(0, Math.min(x, maxX)), obj.getTopLeftCorner().y()));
             }
         }
-//            for (GameObject obj : gameObjects().objectsInLayer(Layer.DEFAULT)) {
-//                if (obj instanceof Paddle) {
-//                    float newX = Math.max(0, Math.min(WINDOW_DIMENSIONS.x() - obj.getDimensions().x(), obj.getTopLeftCorner().x()));
-//                    obj.setTopLeftCorner(new Vector2(newX, obj.getTopLeftCorner().y()));
+
+//        for (GameObject obj : gameObjects().objectsInLayer(Layer.DEFAULT)) {
+//            if (obj instanceof Paddle) {
+//                if (obj.getTopLeftCorner().x() < 0) {
+//                    obj.setTopLeftCorner(new Vector2(0, obj.getTopLeftCorner().y()));
+//                } else if ((obj.getTopLeftCorner().x() >
+//                        (windowDimensions.x() - obj.getDimensions().x()))) {
+//                    obj.setTopLeftCorner(new Vector2(WINDOW_DIMENSIONS.x() - obj.getDimensions().x(),
+//                            obj.getTopLeftCorner().y()));
 //                }
 //            }
 //        }
     }
+
 
     public static void main(String[] args) {
         BrickerGameManager game;
