@@ -78,7 +78,7 @@ public class GameObjectFactory {
         Renderable paddleImage = imageReader.readImage(paddleImagePath, true);
         Vector2 paddleSize = new Vector2(paddleWidth, paddleHeight);
         GameObject paddle = new Paddle(Vector2.ZERO, paddleSize, paddleImage, inputListener);
-        paddle.setCenter(new Vector2(windowDimensions.x() / 2, windowDimensions.y() - 70));
+        paddle.setCenter(new Vector2(windowDimensions.x() / 2, windowDimensions.y() - 50));
         return paddle;
     }
 
@@ -114,10 +114,9 @@ public class GameObjectFactory {
         return row;
     }
 
-    public LifeCounter createLifeCounter(String lifeImagePath, int lives, GameObjectCollection gameObjects) {
+    public GameObject createLifeCounter(String lifeImagePath, int lives, GameObjectCollection gameObjects) {
         Renderable ballImage = imageReader.readImage(lifeImagePath, true);
         return new LifeCounter(new Vector2(50, windowDimensions.y() - 20), new Vector2(20*lives, 20), ballImage,lives,gameObjects);
     }
 
-//    public GameObject GraphicalLifeCounter(String imagePath)
 }

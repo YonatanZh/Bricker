@@ -17,6 +17,7 @@ public class LifeCounter extends GameObject {
     private final GameObjectCollection gameObjects;
 
     //TODO : maybe do lives counter as global counter like for bricks?
+    //TODO : make graphic counter do all the work
 
     public LifeCounter(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable, int lives, GameObjectCollection gameObjects) {
         super(topLeftCorner, dimensions, null);
@@ -34,6 +35,8 @@ public class LifeCounter extends GameObject {
             gameObjects.addGameObject(graphicalLives[i], Layer.UI);
         }
     }
+
+//    todo have every object habe his fucnion
 
     public void loseLife() {
         lives--;

@@ -98,7 +98,7 @@ public class BrickerGameManager extends GameManager {
         GameObject [][] bricks = new GameObject[rowsOfBricks][bricksPerRow];
         bricks = gameObjectFactory.createBrick(bricks, BRICK_PATH, WALL_WIDTH, BRICK_HEIGHT, BUFFER, this,
                 this.bricksPerRow, this.rowsOfBricks);
-        this.lifeCounter = gameObjectFactory.createLifeCounter(LIFE_HEART_PATH, DEFAULT_LIVES, gameObjects());
+        this.lifeCounter = (LifeCounter) gameObjectFactory.createLifeCounter(LIFE_HEART_PATH, DEFAULT_LIVES, gameObjects());
 
         // adding elements
         gameObjects().addGameObject(background, Layer.BACKGROUND);
