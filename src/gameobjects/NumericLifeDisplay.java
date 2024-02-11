@@ -43,6 +43,11 @@ public class NumericLifeDisplay extends GameObject {
 //        update(0);
 //    }
 
+    public void decrementLives(int lives) {
+        this.lifeCounter.setString(Integer.toString(lives));
+    }
+
+
     public void setColor(int counter) {
         if (counter >= GREEN_THRESHOLD) {
             lifeCounter.setColor(Color.GREEN);

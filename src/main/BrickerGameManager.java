@@ -7,6 +7,7 @@ import danogl.gui.*;
 import danogl.util.Counter;
 import danogl.util.Vector2;
 import gameobjects.GameObjectFactory;
+import gameobjects.LifeCounter;
 import gameobjects.Paddle;
 
 public class BrickerGameManager extends GameManager {
@@ -24,6 +25,7 @@ public class BrickerGameManager extends GameManager {
 
     // assets paths
     private static final String BALL_PATH = "assets/ball.png";
+    private static final String LIFE_HEART_PATH = "assets/heart.png";
     private static final String BALL_SOUND_PATH = "assets/blop_cut_silenced.wav";
     private static final String PADDLE_PATH = "assets/paddle.png";
     private static final String BACKGROUND_PATH = "assets/DARK_BG2_small.jpeg";
@@ -41,7 +43,7 @@ public class BrickerGameManager extends GameManager {
     private static final int BRICK_HEIGHT = 15;
 
     // lives constants
-    private static final int DEFAULT_LIFES = 1;
+    private static final int DEFAULT_LIVES = 3;
 
     private ImageReader imageReader;
     private SoundReader soundReader;
@@ -51,6 +53,7 @@ public class BrickerGameManager extends GameManager {
     private GameObjectFactory gameObjectFactory;
     private GameObject ball;
     private GameObject paddle;
+    private LifeCounter lifeCounter;
     private int lives;
     private final int rowsOfBricks;
     private final int bricksPerRow;
@@ -62,7 +65,7 @@ public class BrickerGameManager extends GameManager {
         this.windowDimensions = new Vector2(WIDTH, HEIGHT);
         this.bricksPerRow = DEFAULT_BRICK_PER_ROW;
         this.rowsOfBricks = DEFAULT_ROW_OF_BRICKS;
-        this.lives = DEFAULT_LIFES;
+        this.lives = DEFAULT_LIVES;
     }
 
     public BrickerGameManager(Vector2 windowDimensions, int bricksPerRow, int rowsOfBricks) {
@@ -70,7 +73,7 @@ public class BrickerGameManager extends GameManager {
         this.windowDimensions = windowDimensions;
         this.rowsOfBricks = rowsOfBricks;
         this.bricksPerRow = bricksPerRow;
-        this.lives = DEFAULT_LIFES;
+        this.lives = DEFAULT_LIVES;
     }
 
     @Override
@@ -84,7 +87,6 @@ public class BrickerGameManager extends GameManager {
         this.windowController = windowController;
         this.brickCounter = new Counter(this.bricksPerRow * this.rowsOfBricks);
 
-
         this.gameObjectFactory = new GameObjectFactory(imageReader, soundReader, inputListener,
                 windowDimensions, gameObjects());
 
@@ -96,6 +98,7 @@ public class BrickerGameManager extends GameManager {
         GameObject [][] bricks = new GameObject[rowsOfBricks][bricksPerRow];
         bricks = gameObjectFactory.createBrick(bricks, BRICK_PATH, WALL_WIDTH, BRICK_HEIGHT, BUFFER, this,
                 this.bricksPerRow, this.rowsOfBricks);
+        this.lifeCounter = gameObjectFactory.createLifeCounter(LIFE_HEART_PATH, DEFAULT_LIVES, gameObjects());
 
         // adding elements
         gameObjects().addGameObject(background, Layer.BACKGROUND);
@@ -117,6 +120,7 @@ public class BrickerGameManager extends GameManager {
         checkWinCondition();
         if(isBallOutOfBounds()) {
             lives--;
+            this.lifeCounter.loseLife();
             checkEndGame();
             gameObjects().removeGameObject(ball);
             this.ball = gameObjectFactory.createBall(BALL_PATH, BALL_SOUND_PATH, BALL_RADIUS, BALL_SPEED);
@@ -142,31 +146,25 @@ public class BrickerGameManager extends GameManager {
         return ball.getCenter().y() > windowDimensions.y();
     }
 
+    private void resetWindowDialog(String prompt) {
+        if (windowController.openYesNoDialog(prompt)) {
+            lives = DEFAULT_LIVES;
+            this.windowController.resetGame();
+        } else {
+            windowController.closeWindow();
+        }
+    }
 
 
     private void checkEndGame() {
         if (lives == 0) {
-            //todo reformat this EDEN
-            if (windowController.openYesNoDialog(LOSE_PROMPT)) {
-                lives = DEFAULT_LIFES;
-                this.windowController.resetGame();
-                this.initializeGame(imageReader, soundReader, inputListener, windowController);
-//                windowController.resetGame();
-            } else {
-                windowController.closeWindow();
-            }
+            resetWindowDialog(LOSE_PROMPT);
         }
     }
 
     private void checkWinCondition() {
         if (brickCounter.value() == 0 || inputListener.isKeyPressed('W')) {
-            if (windowController.openYesNoDialog(WIN_PROMPT)) {
-                lives = DEFAULT_LIFES;;
-                windowController.resetGame();
-                this.initializeGame(imageReader, soundReader, inputListener, windowController);
-            } else {
-                windowController.closeWindow();
-            }
+            resetWindowDialog(WIN_PROMPT);
         }
     }
 
