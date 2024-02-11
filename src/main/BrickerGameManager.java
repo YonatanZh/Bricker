@@ -1,21 +1,13 @@
 package main;
 
-import brick_strategies.BasicCollisionStrategy;
-import brick_strategies.CollisionStrategy;
 import danogl.GameManager;
 import danogl.GameObject;
-import danogl.collisions.GameObjectCollection;
 import danogl.collisions.Layer;
-import danogl.components.CoordinateSpace;
 import danogl.gui.*;
-import danogl.gui.rendering.Renderable;
+import danogl.util.Counter;
 import danogl.util.Vector2;
-import gameobjects.Ball;
-import gameobjects.Brick;
 import gameobjects.GameObjectFactory;
 import gameobjects.Paddle;
-
-import java.util.Random;
 
 public class BrickerGameManager extends GameManager {
 
@@ -28,6 +20,7 @@ public class BrickerGameManager extends GameManager {
     // game Strings
     private static final String TITLE = "Bricker";
     private static final String LOSE_PROMPT = "You lose! Play again?";
+    private static final String WIN_PROMPT = "You win! Play again?";
 
     // assets paths
     private static final String BALL_PATH = "assets/ball.png";
@@ -35,7 +28,6 @@ public class BrickerGameManager extends GameManager {
     private static final String PADDLE_PATH = "assets/paddle.png";
     private static final String BACKGROUND_PATH = "assets/DARK_BG2_small.jpeg";
     private static final String BRICK_PATH = "assets/brick.png";
-
 
     // ball and paddle dimensions
     private static final int BALL_RADIUS = 20;
@@ -49,7 +41,7 @@ public class BrickerGameManager extends GameManager {
     private static final int BRICK_HEIGHT = 15;
 
     // lives constants
-    private static final int DEFAULT_LIFES = 3;
+    private static final int DEFAULT_LIFES = 1;
 
     private ImageReader imageReader;
     private SoundReader soundReader;
@@ -62,6 +54,7 @@ public class BrickerGameManager extends GameManager {
     private int lives;
     private final int rowsOfBricks;
     private final int bricksPerRow;
+    private Counter brickCounter;
 
 
     public BrickerGameManager() {
@@ -89,6 +82,7 @@ public class BrickerGameManager extends GameManager {
         this.soundReader = soundReader;
         this.inputListener = inputListener;
         this.windowController = windowController;
+        this.brickCounter = new Counter(this.bricksPerRow * this.rowsOfBricks);
 
 
         this.gameObjectFactory = new GameObjectFactory(imageReader, soundReader, inputListener,
@@ -120,6 +114,7 @@ public class BrickerGameManager extends GameManager {
     public void update(float deltaTime) {
         super.update(deltaTime);
         checkPaddleWallCollision();
+        checkWinCondition();
         if(isBallOutOfBounds()) {
             lives--;
             checkEndGame();
@@ -147,18 +142,36 @@ public class BrickerGameManager extends GameManager {
         return ball.getCenter().y() > windowDimensions.y();
     }
 
+
+
     private void checkEndGame() {
         if (lives == 0) {
+            //todo reformat this EDEN
             if (windowController.openYesNoDialog(LOSE_PROMPT)) {
                 lives = DEFAULT_LIFES;
-                windowController.resetGame();
+                this.windowController.resetGame();
+                this.initializeGame(imageReader, soundReader, inputListener, windowController);
+//                windowController.resetGame();
             } else {
                 windowController.closeWindow();
             }
         }
     }
 
-    //todo reformat this EDEN
+    private void checkWinCondition() {
+        if (brickCounter.value() == 0 || inputListener.isKeyPressed('W')) {
+            if (windowController.openYesNoDialog(WIN_PROMPT)) {
+                lives = DEFAULT_LIFES;;
+                windowController.resetGame();
+                this.initializeGame(imageReader, soundReader, inputListener, windowController);
+            } else {
+                windowController.closeWindow();
+            }
+        }
+    }
+
+
+
     private void checkPaddleWallCollision() {
         for (GameObject obj : gameObjects().objectsInLayer(Layer.DEFAULT)) {
             if (obj instanceof Paddle) {
@@ -168,18 +181,6 @@ public class BrickerGameManager extends GameManager {
                 obj.setTopLeftCorner(new Vector2(Math.max(0, Math.min(x, maxX)), obj.getTopLeftCorner().y()));
             }
         }
-
-//        for (GameObject obj : gameObjects().objectsInLayer(Layer.DEFAULT)) {
-//            if (obj instanceof Paddle) {
-//                if (obj.getTopLeftCorner().x() < 0) {
-//                    obj.setTopLeftCorner(new Vector2(0, obj.getTopLeftCorner().y()));
-//                } else if ((obj.getTopLeftCorner().x() >
-//                        (windowDimensions.x() - obj.getDimensions().x()))) {
-//                    obj.setTopLeftCorner(new Vector2(WINDOW_DIMENSIONS.x() - obj.getDimensions().x(),
-//                            obj.getTopLeftCorner().y()));
-//                }
-//            }
-//        }
     }
 
 
@@ -194,6 +195,10 @@ public class BrickerGameManager extends GameManager {
             game = new BrickerGameManager();
         }
         game.run();
+    }
+
+    public Counter getBrickCounter() {
+        return brickCounter;
     }
 }
 

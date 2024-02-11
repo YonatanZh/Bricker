@@ -4,10 +4,10 @@ import brick_strategies.BasicCollisionStrategy;
 import brick_strategies.CollisionStrategy;
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
-import danogl.collisions.Layer;
 import danogl.components.CoordinateSpace;
 import danogl.gui.*;
 import danogl.gui.rendering.Renderable;
+import danogl.util.Counter;
 import danogl.util.Vector2;
 import main.BrickerGameManager;
 
@@ -87,29 +87,36 @@ public class GameObjectFactory {
                             int bricksPerRow, int rowsOfBricks) {
         Renderable brickImage = imageReader.readImage(brickImagePath, false);
         BasicCollisionStrategy bcs = new BasicCollisionStrategy(gameManager);
+        Counter brickCounter = gameManager.getBrickCounter();
 
         int distFromWall = (wallWidth * 2) + 1;
         int allBufferSize = (bricksPerRow - 1) * bufferSize;
         float brickWidth = (windowDimensions.x() - distFromWall - allBufferSize) / bricksPerRow;
         for (int i = 1; i <= rowsOfBricks; i++) {
             listOfBricks[i-1] = createBrickRow(brickWidth, brickHeight, i, bricksPerRow, wallWidth,
-                    bufferSize, brickImage, bcs);
+                    bufferSize, brickImage, bcs, brickCounter);
         }
         return listOfBricks;
     }
 
     private GameObject[] createBrickRow(float brickWidth, int brickHeight, int rowIndex, int bricksPerRow,
                                 int wallWidth, int bufferSize, Renderable brickImage,
-                                CollisionStrategy strat) {
+                                CollisionStrategy strat, Counter brickCounter) {
         Vector2 brickDimension = new Vector2(brickWidth, brickHeight);
         GameObject [] row = new GameObject[bricksPerRow];
         for (int i = 0; i < bricksPerRow; i++) {
 
             Vector2 topLeft = new Vector2( (i * (bufferSize + brickWidth)) + wallWidth,
                     rowIndex * (brickHeight + bufferSize) + wallWidth);
-            GameObject brick = new Brick(topLeft, brickDimension, brickImage, strat);
+            GameObject brick = new Brick(topLeft, brickDimension, brickImage, strat, brickCounter);
             row[i] = brick;
         }
         return row;
     }
+
+    public GameObject createNumericLifeCounter(Vector2 topLeftCorner, Vector2 dimensions, int lives) {
+        return new NumericLifeDisplay(topLeftCorner, dimensions, lives);
+    }
+
+//    public GameObject GraphicalLifeCounter(String imagePath)
 }
