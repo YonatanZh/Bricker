@@ -37,7 +37,7 @@ public class LifeCounter extends GameObject {
 
     public void loseLife() {
         lives--;
-        gameObjects.removeGameObject(graphicalLives[lives]);
+        gameObjects.removeGameObject(graphicalLives[lives], Layer.UI);
         numericLifeCounter.decrementLives(lives);
         numericLifeCounter.setColor(lives);
     }
