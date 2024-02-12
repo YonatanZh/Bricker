@@ -18,7 +18,7 @@ public class LifeCounter extends GameObject {
 
     //TODO : maybe do lives counter as global counter like for bricks?
     //TODO : make graphic counter do all the work
-
+    //todo : make the constructor use the objects from the factory
     public LifeCounter(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable, int lives, GameObjectCollection gameObjects) {
         super(topLeftCorner, dimensions, null);
         this.lives = lives;
