@@ -46,7 +46,7 @@ public class ExtraPuck implements SpecialBehaviors {
             float velocityX = (float) Math.cos(angle) * ballSpeed;
             float velocityY = (float) Math.sin(angle) * ballSpeed;
 
-            puck.setVelocity(new Vector2(velocityX, velocityY));
+            puck.setVelocity(new Vector2(velocityX, velocityY).mult(ballSpeed));
 
             gameObjects.addGameObject(puck);
         }

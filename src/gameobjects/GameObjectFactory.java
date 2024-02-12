@@ -2,6 +2,8 @@ package gameobjects;
 
 import brick_strategies.BasicCollisionStrategy;
 import brick_strategies.CollisionStrategy;
+import brick_strategies.SpecialCollisionStrategy;
+import danogl.GameManager;
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
 import danogl.components.CoordinateSpace;
@@ -14,20 +16,20 @@ import java.util.Random;
 
 public class GameObjectFactory {
 
+    private GameManager owner;
     private final ImageReader imageReader;
     private final SoundReader soundReader;
     private final UserInputListener inputListener;
     private final Vector2 windowDimensions;
-    private final Random rand;
 
-    public GameObjectFactory(ImageReader imageReader, SoundReader soundReader,
+
+    public GameObjectFactory(GameManager owner, ImageReader imageReader, SoundReader soundReader,
                              UserInputListener inputListener, Vector2 windowDimensions) {
-
+        this.owner = owner;
         this.imageReader = imageReader;
         this.soundReader = soundReader;
         this.inputListener = inputListener;
         this.windowDimensions = windowDimensions;
-        this.rand = new Random();
     }
 
     public GameObject createBackground(String imagePath) {
@@ -67,21 +69,25 @@ public class GameObjectFactory {
         return paddle;
     }
 
-    public GameObject createTempPaddle(String paddleImagePath, Vector2 paddleSize, Vector2 position,
-                                       GameObjectCollection gameObjects) {
+    public GameObject createDisappearingPaddle(String paddleImagePath, Vector2 paddleSize, Vector2 position,
+                                               GameObjectCollection gameObjects, Counter paddleCounter) {
         Renderable paddleImage = imageReader.readImage(paddleImagePath, true);
         CollisionStrategy basicCollisionStrategy = new BasicCollisionStrategy(gameObjects);
         GameObject paddle = new DisappearingPaddle(position, paddleSize, paddleImage, inputListener,
-                basicCollisionStrategy);
+                basicCollisionStrategy, paddleCounter);
         paddle.setCenter(position);
         return paddle;
     }
 
+    //todo move this logic to the game manager - yonatan
     public GameObject[][] createBrick(GameObject[][] listOfBricks, String brickImagePath, int wallWidth,
                                       int brickHeight, int bufferSize, GameObjectCollection gameObjects,
                                       int bricksPerRow, int rowsOfBricks, Counter brickCounter) {
         Renderable brickImage = imageReader.readImage(brickImagePath, false);
-        CollisionStrategy bcs = new BasicCollisionStrategy(gameObjects);
+        // todo figure out how to get rid of the magic numbers - yonatan
+        CollisionStrategy bcs = new SpecialCollisionStrategy(owner, gameObjects, this, windowDimensions, 10,
+                10,
+                new Vector2(100, 15));
 
         int distFromWall = (wallWidth * 2) + 1;
         int allBufferSize = (bricksPerRow - 1) * bufferSize;
@@ -108,7 +114,7 @@ public class GameObjectFactory {
         return row;
     }
 
-    //todo: create graphical functuion, create numeric function make the create life counter use them.
+    //todo: create graphical functuion, create numeric function make the create life counter use them. - eden
 
 
     public GameObject createLifeCounter(String lifeImagePath, int lives, GameObjectCollection gameObjects) {

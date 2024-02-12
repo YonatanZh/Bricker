@@ -91,31 +91,37 @@ public class BrickerGameManager extends GameManager {
         this.brickCounter = new Counter(this.bricksPerRow * this.rowsOfBricks);
         this.screenCenter = windowDimensions.mult(0.5f);
 
-        this.gameObjectFactory = new GameObjectFactory(imageReader, soundReader, inputListener,
+        this.gameObjectFactory = new GameObjectFactory(this ,imageReader, soundReader, inputListener,
                 windowDimensions);
 
 
-        // creating game objects
+
         GameObject background = gameObjectFactory.createBackground(BACKGROUND_PATH);
+        gameObjects().addGameObject(background, Layer.BACKGROUND);
+
         GameObject[] walls = gameObjectFactory.createWalls(WALL_WIDTH);
+        addWalls(walls);
+
         this.ball = gameObjectFactory.createBall(BALL_PATH, BALL_SOUND_PATH, BALL_RADIUS, screenCenter);
         setBallVelocity(ball);
+        gameObjects().addGameObject(this.ball);
+
         Vector2 paddleSize = new Vector2(PADDLE_WIDTH, PADDLE_HEIGHT);
         Vector2 paddlePosition = new Vector2(windowDimensions.x() / 2, windowDimensions.y() - 50);
         this.paddle = gameObjectFactory.createPaddle(PADDLE_PATH, paddleSize, paddlePosition);
+        gameObjects().addGameObject(this.paddle);
+
         GameObject[][] bricks = new GameObject[rowsOfBricks][bricksPerRow];
         bricks = gameObjectFactory.createBrick(bricks, BRICK_PATH, WALL_WIDTH, BRICK_HEIGHT, BUFFER,
                 gameObjects(),
                 this.bricksPerRow, this.rowsOfBricks, this.brickCounter);
+        addBricks(bricks);
+
+
         this.lifeCounter = (LifeCounter) gameObjectFactory.createLifeCounter(LIFE_HEART_PATH, DEFAULT_LIVES,
                 gameObjects());
 
-        // adding elements
-        gameObjects().addGameObject(background, Layer.BACKGROUND);
-        addWalls(walls);
-        gameObjects().addGameObject(this.ball);
-        gameObjects().addGameObject(this.paddle);
-        addBricks(bricks);
+
 
     }
 
