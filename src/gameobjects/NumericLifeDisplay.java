@@ -1,7 +1,10 @@
 package gameobjects;
 
 import danogl.GameObject;
+import danogl.collisions.GameObjectCollection;
+import danogl.collisions.Layer;
 import danogl.gui.rendering.TextRenderable;
+import danogl.util.Counter;
 import danogl.util.Vector2;
 
 import java.awt.*;
@@ -16,42 +19,30 @@ public class NumericLifeDisplay extends GameObject {
     private static final int GREEN_THRESHOLD = 3;
     private static final int YELLOW_THRESHOLD = 2;
 
-
+    private final Counter lives;
     private final TextRenderable lifeCounter;
 
-    public NumericLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions, int lives) {
+    public NumericLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions, Counter lives,
+                              GameObjectCollection gameObjects) {
         super(topLeftCorner, dimensions, null);
-        this.lifeCounter = new TextRenderable(Integer.toString(lives));
-        setColor(lives);
+        this.lifeCounter = new TextRenderable(Integer.toString(lives.value()));
+        this.lives = lives;
+        setColor();
         this.renderer().setRenderable(lifeCounter);
+        this.setCenter(topLeftCorner);
+        gameObjects.addGameObject(this, Layer.UI);
     }
 
-//    @Override
-//    public void update(float deltaTime) {
-//        super.update(deltaTime);
-//        lifeCounter.setString(Integer.toString(counter));
-//        setColor();
-//    }
-
-//    public void decreaseLife() {
-//        counter--;
-//        update(0);
-//    }
-//
-//    public void increaseLife() {
-//        counter++;
-//        update(0);
-//    }
-
-    public void decrementLives(int lives) {
-        this.lifeCounter.setString(Integer.toString(lives));
+    public void loseLife() {
+        this.lifeCounter.setString(Integer.toString(lives.value()));
+        setColor();
     }
 
 
-    public void setColor(int counter) {
-        if (counter >= GREEN_THRESHOLD) {
+    public void setColor() {
+        if (lives.value() >= GREEN_THRESHOLD) {
             lifeCounter.setColor(Color.GREEN);
-        } else if (counter == YELLOW_THRESHOLD) {
+        } else if (lives.value() == YELLOW_THRESHOLD) {
             lifeCounter.setColor(Color.YELLOW);
         } else {
             lifeCounter.setColor(Color.RED);

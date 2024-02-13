@@ -4,6 +4,7 @@ import danogl.GameManager;
 import danogl.GameObject;
 import danogl.collisions.Layer;
 import danogl.gui.*;
+import danogl.gui.rendering.Renderable;
 import danogl.util.Counter;
 import danogl.util.Vector2;
 import gameobjects.GameObjectFactory;
@@ -19,6 +20,7 @@ public class BrickerGameManager extends GameManager {
     private static final int HEIGHT = 600;
     private static final int WALL_WIDTH = 5;
     private static final int BUFFER = 5;
+    private static final int LIVES_INDENT_SIZE = 50;
 
     // game Strings
     private static final String TITLE = "Bricker";
@@ -38,6 +40,7 @@ public class BrickerGameManager extends GameManager {
     private static final int PADDLE_WIDTH = 100;
     private static final int PADDLE_HEIGHT = 15;
     private static final int BALL_SPEED = 200;
+    private static final int LIVES_SQUARE_SIZE = 20;
 
     // brick dimensions
     private static final int DEFAULT_ROW_OF_BRICKS = 7;
@@ -117,9 +120,11 @@ public class BrickerGameManager extends GameManager {
                 this.bricksPerRow, this.rowsOfBricks, this.brickCounter);
         addBricks(bricks);
 
-
-        this.lifeCounter = (LifeCounter) gameObjectFactory.createLifeCounter(LIFE_HEART_PATH, DEFAULT_LIVES,
-                gameObjects());
+        Renderable ballImage = imageReader.readImage(LIFE_HEART_PATH, true);
+        Vector2 livesTopLeftCorner = new Vector2(LIVES_INDENT_SIZE, windowDimensions.y() - LIVES_SQUARE_SIZE);
+        Vector2 livesDimensions = new Vector2((LIVES_SQUARE_SIZE + BUFFER) * DEFAULT_LIVES, LIVES_SQUARE_SIZE);
+        this.lifeCounter = (LifeCounter) gameObjectFactory.createLifeCounter(livesTopLeftCorner, livesDimensions,
+                ballImage, DEFAULT_LIVES, LIVES_SQUARE_SIZE, BUFFER ,gameObjects());
 
 
 

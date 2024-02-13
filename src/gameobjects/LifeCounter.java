@@ -4,45 +4,36 @@ import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
 import danogl.collisions.Layer;
 import danogl.gui.rendering.Renderable;
+import danogl.util.Counter;
 import danogl.util.Vector2;
 
 public class LifeCounter extends GameObject {
-
-    private static final int SQUARE_SIZE = 20;
-    private static final int MAX_LIVES = 5; //todo change this to the potential max lives
+    private static final int MAX_LIVES = 5; //todo what is this???
 
     private final NumericLifeDisplay numericLifeCounter;
-    private final GraphicalLifeDisplay[] graphicalLives;
-    private int lives;
-    private final GameObjectCollection gameObjects;
+    private final GraphicalLifeDisplay graphicalLives;
+    private final Counter lives;
 
-    //TODO : maybe do lives counter as global counter like for bricks? - eden
-    //TODO : make graphic counter do all the work - eden
-    //todo : make the constructor use the objects from the factory - eden
-    public LifeCounter(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable, int lives, GameObjectCollection gameObjects) {
+
+
+    public LifeCounter(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable, int lives, float objectSize,
+                       int buffer, GameObjectCollection gameObjects, GameObjectFactory gameObjectFactory) {
         super(topLeftCorner, dimensions, null);
-        this.lives = lives;
-        this.gameObjects = gameObjects;
-        this.numericLifeCounter = new NumericLifeDisplay(topLeftCorner, new Vector2(SQUARE_SIZE, SQUARE_SIZE), lives);
-        this.numericLifeCounter.setCenter(topLeftCorner);
-        gameObjects.addGameObject(numericLifeCounter, Layer.UI);
+        this.lives = new Counter(lives);
+        Vector2 lifeDimensions = new Vector2(objectSize, objectSize);
+        this.numericLifeCounter = (NumericLifeDisplay) gameObjectFactory.createNumericLifeDisplay(topLeftCorner,
+                lifeDimensions, this.lives, gameObjects);
 
-        this.graphicalLives = new GraphicalLifeDisplay[MAX_LIVES];
-        for (int i = 0; i < lives; i++) {
-            float x = topLeftCorner.x() + (i + 1) * SQUARE_SIZE;
-            Vector2 position = new Vector2(x, topLeftCorner.y());
-            graphicalLives[i] = new GraphicalLifeDisplay(position, new Vector2(SQUARE_SIZE, SQUARE_SIZE), renderable, position);
-            gameObjects.addGameObject(graphicalLives[i], Layer.UI);
-        }
+        Vector2 indentation = new Vector2(objectSize + buffer, 0);
+        this.graphicalLives = (GraphicalLifeDisplay) gameObjectFactory.createGraphicalLifeDisplay(topLeftCorner.add(indentation),
+                lifeDimensions, renderable, objectSize, buffer, this.lives, gameObjects);
     }
 
-//    todo have every object i.e the life counters, have his fucnion - eden
 
     public void loseLife() {
-        lives--;
-        gameObjects.removeGameObject(graphicalLives[lives], Layer.UI);
-        numericLifeCounter.decrementLives(lives);
-        numericLifeCounter.setColor(lives);
+        lives.decrement();
+        graphicalLives.loseLife();
+        numericLifeCounter.loseLife();
     }
 
 }

@@ -12,11 +12,9 @@ import danogl.gui.rendering.Renderable;
 import danogl.util.Counter;
 import danogl.util.Vector2;
 
-import java.util.Random;
-
 public class GameObjectFactory {
 
-    private GameManager owner;
+    private final GameManager owner;
     private final ImageReader imageReader;
     private final SoundReader soundReader;
     private final UserInputListener inputListener;
@@ -114,13 +112,21 @@ public class GameObjectFactory {
         return row;
     }
 
-    //todo: create graphical functuion, create numeric function make the create life counter use them. - eden
 
 
-    public GameObject createLifeCounter(String lifeImagePath, int lives, GameObjectCollection gameObjects) {
-        Renderable ballImage = imageReader.readImage(lifeImagePath, true);
-        return new LifeCounter(new Vector2(50, windowDimensions.y() - 20), new Vector2(20 * lives, 20),
-                ballImage, lives, gameObjects);
+    public GameObject createNumericLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions, Counter lives, GameObjectCollection gameObjects) {
+        return new NumericLifeDisplay(topLeftCorner, dimensions, lives, gameObjects);
+    }
+
+    public GameObject createGraphicalLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable,
+                                                 float objectSize, int buffer, Counter lives,
+                                                 GameObjectCollection gameObjects) {
+        return new GraphicalLifeDisplay(topLeftCorner, dimensions, renderable, objectSize, buffer, lives, gameObjects);
+    }
+
+    public GameObject createLifeCounter(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable, int lives,  float objectSize,
+                                        int buffer, GameObjectCollection gameObjects) {
+        return new LifeCounter(topLeftCorner, dimensions, renderable, lives, objectSize, buffer, gameObjects, this);
     }
 
 }
