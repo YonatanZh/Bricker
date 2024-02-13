@@ -1,19 +1,19 @@
 package brick_strategies;
 
 import danogl.GameObject;
+import danogl.collisions.GameObjectCollection;
 import main.BrickerGameManager;
 
 public class BasicCollisionStrategy implements CollisionStrategy{
 
-    private BrickerGameManager gameManager;
+    protected GameObjectCollection gameObjects;
 
-    public BasicCollisionStrategy(BrickerGameManager gameManager) {
-        this.gameManager = gameManager;
+    public BasicCollisionStrategy(GameObjectCollection gameObjects) {
+        this.gameObjects = gameObjects;
     }
 
     @Override
         public void onCollision(GameObject thisObj, GameObject otherObj) {
-            gameManager.deleteObject(thisObj);
-            System.out.println("collision detected");
+            gameObjects.removeGameObject(thisObj);
         }
 }

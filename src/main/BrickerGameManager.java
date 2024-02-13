@@ -10,6 +10,8 @@ import gameobjects.GameObjectFactory;
 import gameobjects.LifeCounter;
 import gameobjects.Paddle;
 
+import java.util.Random;
+
 public class BrickerGameManager extends GameManager {
 
     // screen dimensions
@@ -58,6 +60,7 @@ public class BrickerGameManager extends GameManager {
     private final int rowsOfBricks;
     private final int bricksPerRow;
     private Counter brickCounter;
+    private Vector2 screenCenter;
 
 
     public BrickerGameManager() {
@@ -86,31 +89,40 @@ public class BrickerGameManager extends GameManager {
         this.inputListener = inputListener;
         this.windowController = windowController;
         this.brickCounter = new Counter(this.bricksPerRow * this.rowsOfBricks);
+        this.screenCenter = windowDimensions.mult(0.5f);
 
-        this.gameObjectFactory = new GameObjectFactory(imageReader, soundReader, inputListener,
-                windowDimensions, gameObjects());
+        this.gameObjectFactory = new GameObjectFactory(this ,imageReader, soundReader, inputListener,
+                windowDimensions);
 
-        // creating game objects
+
+
         GameObject background = gameObjectFactory.createBackground(BACKGROUND_PATH);
-        GameObject [] walls = gameObjectFactory.createWalls(WALL_WIDTH);
-        this.ball = gameObjectFactory.createBall(BALL_PATH, BALL_SOUND_PATH, BALL_RADIUS, BALL_SPEED);
-        this.paddle = gameObjectFactory.createPaddle(PADDLE_PATH, PADDLE_WIDTH, PADDLE_HEIGHT);
-        GameObject [][] bricks = new GameObject[rowsOfBricks][bricksPerRow];
-        bricks = gameObjectFactory.createBrick(bricks, BRICK_PATH, WALL_WIDTH, BRICK_HEIGHT, BUFFER, this,
-                this.bricksPerRow, this.rowsOfBricks);
-        this.lifeCounter = (LifeCounter) gameObjectFactory.createLifeCounter(LIFE_HEART_PATH, DEFAULT_LIVES, gameObjects());
-
-        // adding elements
         gameObjects().addGameObject(background, Layer.BACKGROUND);
+
+        GameObject[] walls = gameObjectFactory.createWalls(WALL_WIDTH);
         addWalls(walls);
+
+        this.ball = gameObjectFactory.createBall(BALL_PATH, BALL_SOUND_PATH, BALL_RADIUS, screenCenter);
+        setBallVelocity(ball);
         gameObjects().addGameObject(this.ball);
+
+        Vector2 paddleSize = new Vector2(PADDLE_WIDTH, PADDLE_HEIGHT);
+        Vector2 paddlePosition = new Vector2(windowDimensions.x() / 2, windowDimensions.y() - 50);
+        this.paddle = gameObjectFactory.createPaddle(PADDLE_PATH, paddleSize, paddlePosition);
         gameObjects().addGameObject(this.paddle);
+
+        GameObject[][] bricks = new GameObject[rowsOfBricks][bricksPerRow];
+        bricks = gameObjectFactory.createBrick(bricks, BRICK_PATH, WALL_WIDTH, BRICK_HEIGHT, BUFFER,
+                gameObjects(),
+                this.bricksPerRow, this.rowsOfBricks, this.brickCounter);
         addBricks(bricks);
 
-    }
 
-    public void deleteObject(GameObject thisObj) {
-        gameObjects().removeGameObject(thisObj);
+        this.lifeCounter = (LifeCounter) gameObjectFactory.createLifeCounter(LIFE_HEART_PATH, DEFAULT_LIVES,
+                gameObjects());
+
+
+
     }
 
     @Override
@@ -118,14 +130,23 @@ public class BrickerGameManager extends GameManager {
         super.update(deltaTime);
         checkPaddleWallCollision();
         checkWinCondition();
-        if(isBallOutOfBounds()) {
-            lives--;
-            this.lifeCounter.loseLife();
-            checkEndGame();
-            gameObjects().removeGameObject(ball);
-            this.ball = gameObjectFactory.createBall(BALL_PATH, BALL_SOUND_PATH, BALL_RADIUS, BALL_SPEED);
-            gameObjects().addGameObject(ball);
+        if (isBallOutOfBounds()) {
+            resetBallAfterLoss();
         }
+        removeOutOfBoundsItems();
+    }
+
+    private void setBallVelocity(GameObject ball) {
+        float velocityX = BALL_SPEED;
+        float velocityY = BALL_SPEED;
+        Random rand = new Random();
+        if (rand.nextBoolean()) {
+            velocityX = -velocityX;
+        }
+        if (rand.nextBoolean()) {
+            velocityY = -velocityY;
+        }
+        ball.setVelocity(new Vector2(velocityX, velocityY));
     }
 
     private void addWalls(GameObject[] walls) {
@@ -146,6 +167,24 @@ public class BrickerGameManager extends GameManager {
         return ball.getCenter().y() > windowDimensions.y();
     }
 
+    private void resetBallAfterLoss(){
+        lives--;
+        this.lifeCounter.loseLife();
+        checkEndGame();
+        gameObjects().removeGameObject(ball);
+        this.ball = gameObjectFactory.createBall(BALL_PATH, BALL_SOUND_PATH, BALL_RADIUS, screenCenter);
+        setBallVelocity(ball);
+        gameObjects().addGameObject(ball);
+    }
+
+    private void removeOutOfBoundsItems() {
+        for (GameObject obj : gameObjects().objectsInLayer(Layer.DEFAULT)) {
+            if (obj.getCenter().y() > windowDimensions.y()) {
+                gameObjects().removeGameObject(obj);
+            }
+        }
+    }
+
     private void resetWindowDialog(String prompt) {
         if (windowController.openYesNoDialog(prompt)) {
             lives = DEFAULT_LIVES;
@@ -154,7 +193,6 @@ public class BrickerGameManager extends GameManager {
             windowController.closeWindow();
         }
     }
-
 
     private void checkEndGame() {
         if (lives == 0) {
@@ -167,8 +205,6 @@ public class BrickerGameManager extends GameManager {
             resetWindowDialog(WIN_PROMPT);
         }
     }
-
-
 
     private void checkPaddleWallCollision() {
         for (GameObject obj : gameObjects().objectsInLayer(Layer.DEFAULT)) {

@@ -2,6 +2,8 @@ package gameobjects;
 
 import brick_strategies.BasicCollisionStrategy;
 import brick_strategies.CollisionStrategy;
+import brick_strategies.SpecialCollisionStrategy;
+import danogl.GameManager;
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
 import danogl.components.CoordinateSpace;
@@ -9,29 +11,25 @@ import danogl.gui.*;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Counter;
 import danogl.util.Vector2;
-import main.BrickerGameManager;
 
 import java.util.Random;
 
 public class GameObjectFactory {
 
+    private GameManager owner;
     private final ImageReader imageReader;
     private final SoundReader soundReader;
     private final UserInputListener inputListener;
     private final Vector2 windowDimensions;
-    private final GameObjectCollection gameObjects;
-    private final Random rand;
 
-    public GameObjectFactory(ImageReader imageReader, SoundReader soundReader,
-                             UserInputListener inputListener, Vector2 windowDimensions,
-                             GameObjectCollection gameObjects) {
 
+    public GameObjectFactory(GameManager owner, ImageReader imageReader, SoundReader soundReader,
+                             UserInputListener inputListener, Vector2 windowDimensions) {
+        this.owner = owner;
         this.imageReader = imageReader;
         this.soundReader = soundReader;
         this.inputListener = inputListener;
         this.windowDimensions = windowDimensions;
-        this.gameObjects = gameObjects;
-        this.rand = new Random();
     }
 
     public GameObject createBackground(String imagePath) {
@@ -54,59 +52,61 @@ public class GameObjectFactory {
         return new GameObject(position, size, null);
     }
 
-    public GameObject createBall(String ballImagePath, String ballSoundPath, int ballRadius,
-                                 int ballSpeed) {
+    public GameObject createBall(String ballImagePath, String ballSoundPath, float ballRadius,
+                                 Vector2 position) {
         Renderable ballImage = imageReader.readImage(ballImagePath, true);
         Sound collisionSound = soundReader.readSound(ballSoundPath);
         Vector2 ballSize = new Vector2(ballRadius, ballRadius);
         GameObject ball = new Ball(Vector2.ZERO, ballSize, ballImage, collisionSound);
-        ball.setCenter(windowDimensions.mult(0.5f));
-
-        float velocityX = ballSpeed;
-        float velocityY = ballSpeed;
-        if (rand.nextBoolean()) {
-            velocityX = -velocityX;
-        }
-        if (rand.nextBoolean()) {
-            velocityY = -velocityY;
-        }
-        ball.setVelocity(new Vector2(velocityX, velocityY));
+        ball.setCenter(position);
         return ball;
     }
 
-    public GameObject createPaddle(String paddleImagePath, int paddleWidth, int paddleHeight) {
+    public GameObject createPaddle(String paddleImagePath, Vector2 paddleSize, Vector2 position) {
         Renderable paddleImage = imageReader.readImage(paddleImagePath, true);
-        Vector2 paddleSize = new Vector2(paddleWidth, paddleHeight);
-        GameObject paddle = new Paddle(Vector2.ZERO, paddleSize, paddleImage, inputListener);
-        paddle.setCenter(new Vector2(windowDimensions.x() / 2, windowDimensions.y() - 50));
+        GameObject paddle = new Paddle(position, paddleSize, paddleImage, inputListener);
+        paddle.setCenter(position);
         return paddle;
     }
 
-    public GameObject [][] createBrick(GameObject [][] listOfBricks, String brickImagePath, int wallWidth,
-                            int brickHeight, int bufferSize, BrickerGameManager gameManager,
-                            int bricksPerRow, int rowsOfBricks) {
+    public GameObject createDisappearingPaddle(String paddleImagePath, Vector2 paddleSize, Vector2 position,
+                                               GameObjectCollection gameObjects, Counter paddleCounter) {
+        Renderable paddleImage = imageReader.readImage(paddleImagePath, true);
+        CollisionStrategy basicCollisionStrategy = new BasicCollisionStrategy(gameObjects);
+        GameObject paddle = new DisappearingPaddle(position, paddleSize, paddleImage, inputListener,
+                basicCollisionStrategy, paddleCounter);
+        paddle.setCenter(position);
+        return paddle;
+    }
+
+    //todo move this logic to the game manager - yonatan
+    public GameObject[][] createBrick(GameObject[][] listOfBricks, String brickImagePath, int wallWidth,
+                                      int brickHeight, int bufferSize, GameObjectCollection gameObjects,
+                                      int bricksPerRow, int rowsOfBricks, Counter brickCounter) {
         Renderable brickImage = imageReader.readImage(brickImagePath, false);
-        BasicCollisionStrategy bcs = new BasicCollisionStrategy(gameManager);
-        Counter brickCounter = gameManager.getBrickCounter();
+        // todo figure out how to get rid of the magic numbers - yonatan
+        CollisionStrategy bcs = new SpecialCollisionStrategy(owner, gameObjects, this, windowDimensions, 10,
+                10,
+                new Vector2(100, 15));
 
         int distFromWall = (wallWidth * 2) + 1;
         int allBufferSize = (bricksPerRow - 1) * bufferSize;
         float brickWidth = (windowDimensions.x() - distFromWall - allBufferSize) / bricksPerRow;
         for (int i = 1; i <= rowsOfBricks; i++) {
-            listOfBricks[i-1] = createBrickRow(brickWidth, brickHeight, i, bricksPerRow, wallWidth,
+            listOfBricks[i - 1] = createBrickRow(brickWidth, brickHeight, i, bricksPerRow, wallWidth,
                     bufferSize, brickImage, bcs, brickCounter);
         }
         return listOfBricks;
     }
 
     private GameObject[] createBrickRow(float brickWidth, int brickHeight, int rowIndex, int bricksPerRow,
-                                int wallWidth, int bufferSize, Renderable brickImage,
-                                CollisionStrategy strat, Counter brickCounter) {
+                                        int wallWidth, int bufferSize, Renderable brickImage,
+                                        CollisionStrategy strat, Counter brickCounter) {
         Vector2 brickDimension = new Vector2(brickWidth, brickHeight);
-        GameObject [] row = new GameObject[bricksPerRow];
+        GameObject[] row = new GameObject[bricksPerRow];
         for (int i = 0; i < bricksPerRow; i++) {
 
-            Vector2 topLeft = new Vector2( (i * (bufferSize + brickWidth)) + wallWidth,
+            Vector2 topLeft = new Vector2((i * (bufferSize + brickWidth)) + wallWidth,
                     rowIndex * (brickHeight + bufferSize) + wallWidth);
             GameObject brick = new Brick(topLeft, brickDimension, brickImage, strat, brickCounter);
             row[i] = brick;
@@ -114,9 +114,13 @@ public class GameObjectFactory {
         return row;
     }
 
+    //todo: create graphical functuion, create numeric function make the create life counter use them. - eden
+
+
     public GameObject createLifeCounter(String lifeImagePath, int lives, GameObjectCollection gameObjects) {
         Renderable ballImage = imageReader.readImage(lifeImagePath, true);
-        return new LifeCounter(new Vector2(50, windowDimensions.y() - 20), new Vector2(20*lives, 20), ballImage,lives,gameObjects);
+        return new LifeCounter(new Vector2(50, windowDimensions.y() - 20), new Vector2(20 * lives, 20),
+                ballImage, lives, gameObjects);
     }
 
 }

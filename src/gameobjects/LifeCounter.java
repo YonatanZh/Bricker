@@ -16,9 +16,9 @@ public class LifeCounter extends GameObject {
     private int lives;
     private final GameObjectCollection gameObjects;
 
-    //TODO : maybe do lives counter as global counter like for bricks?
-    //TODO : make graphic counter do all the work
-
+    //TODO : maybe do lives counter as global counter like for bricks? - eden
+    //TODO : make graphic counter do all the work - eden
+    //todo : make the constructor use the objects from the factory - eden
     public LifeCounter(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable, int lives, GameObjectCollection gameObjects) {
         super(topLeftCorner, dimensions, null);
         this.lives = lives;
@@ -36,7 +36,7 @@ public class LifeCounter extends GameObject {
         }
     }
 
-//    todo have every object habe his fucnion
+//    todo have every object i.e the life counters, have his fucnion - eden
 
     public void loseLife() {
         lives--;
