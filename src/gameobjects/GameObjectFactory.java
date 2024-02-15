@@ -129,4 +129,9 @@ public class GameObjectFactory {
         return new LifeCounter(topLeftCorner, dimensions, renderable, lives, objectSize, buffer, gameObjects, this);
     }
 
+    public GameObject createFallingLife(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable,
+                                        Vector2 velocity, Vector2 windowDimensions, GameObjectCollection gameObjects, LifeCounter lifeCounter) {
+        return new FallingLife(topLeftCorner, dimensions, renderable, velocity, windowDimensions, gameObjects, lifeCounter);
+    }
+
 }

@@ -49,4 +49,8 @@ public class NumericLifeDisplay extends GameObject {
         }
     }
 
+    public void gainLife() {
+        this.lifeCounter.setString(Integer.toString(lives.value()));
+        setColor();
+    }
 }

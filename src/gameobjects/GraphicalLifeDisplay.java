@@ -1,6 +1,7 @@
 package gameobjects;
 
 import danogl.GameObject;
+import danogl.collisions.Collision;
 import danogl.collisions.GameObjectCollection;
 import danogl.collisions.Layer;
 import danogl.gui.rendering.Renderable;
@@ -27,7 +28,7 @@ GraphicalLifeDisplay extends GameObject {
             Vector2 position = topLeftCorner.add(indentation);
             allGraphicalLives[i] = new GameObject(position, dimensions, renderable);
             allGraphicalLives[i].setCenter(position);
-            gameObjects.addGameObject(allGraphicalLives[i], Layer.UI);
+            gameObjects.addGameObject(allGraphicalLives[i], Layer.DEFAULT);
         }
         this.gameObjects = gameObjects;
         this.lives = lives;
@@ -37,4 +38,7 @@ GraphicalLifeDisplay extends GameObject {
         gameObjects.removeGameObject(allGraphicalLives[lives.value()], Layer.UI);
     }
 
+    public void gainLife(Vector2 topLeftCorner, float objectSize, int buffer) {
+
+    }
 }
