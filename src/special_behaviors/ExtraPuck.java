@@ -16,21 +16,20 @@ public class ExtraPuck implements SpecialBehaviors {
     private static final String SOUND_PATH = "assets/blop_cut_silenced.wav";
     private static final float REDUCTION_FACTOR = 0.75f;
     private static final int PUCK_AMOUNT = 2;
+    private static final int PUCK_SPEED = 175;
 
 
     private final GameObjectCollection gameObjects;
     private final GameObjectFactory gameObjectFactory;
     private final float puckRadius;
-    private final int ballSpeed;
     private final Vector2 position;
     private final Random rand;
 
     public ExtraPuck(GameObjectCollection gameObjects, GameObjectFactory gameObjectFactory, int ballRadius,
-                     int ballSpeed, Vector2 position) {
+                     Vector2 position) {
         this.gameObjects = gameObjects;
         this.gameObjectFactory = gameObjectFactory;
         this.puckRadius = ballRadius * REDUCTION_FACTOR;
-        this.ballSpeed = ballSpeed;
         this.position = position;
         rand = new Random();
     }
@@ -43,10 +42,10 @@ public class ExtraPuck implements SpecialBehaviors {
                     puckRadius, position);
 
             double angle = rand.nextDouble() * Math.PI;
-            float velocityX = (float) Math.cos(angle) * ballSpeed;
-            float velocityY = (float) Math.sin(angle) * ballSpeed;
+            float velocityX = (float) Math.cos(angle) * PUCK_SPEED;
+            float velocityY = (float) Math.sin(angle) * PUCK_SPEED;
 
-            puck.setVelocity(new Vector2(velocityX, velocityY).mult(ballSpeed));
+            puck.setVelocity(new Vector2(velocityX, velocityY));
 
             gameObjects.addGameObject(puck);
         }

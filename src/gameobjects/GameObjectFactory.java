@@ -77,61 +77,36 @@ public class GameObjectFactory {
         return paddle;
     }
 
-    //todo move this logic to the game manager - yonatan
-    public GameObject[][] createBrick(GameObject[][] listOfBricks, String brickImagePath, int wallWidth,
-                                      int brickHeight, int bufferSize, GameObjectCollection gameObjects,
-                                      int bricksPerRow, int rowsOfBricks, Counter brickCounter, LifeCounter lifeCounter) {
-        Renderable brickImage = imageReader.readImage(brickImagePath, false);
-        // todo figure out how to get rid of the magic numbers - yonatan
-        CollisionStrategy bcs = new SpecialCollisionStrategy(owner, gameObjects, this, windowDimensions, 10,
-                10,
-                new Vector2(100, 15), lifeCounter);
-
-        int distFromWall = (wallWidth * 2) + 1;
-        int allBufferSize = (bricksPerRow - 1) * bufferSize;
-        float brickWidth = (windowDimensions.x() - distFromWall - allBufferSize) / bricksPerRow;
-        for (int i = 1; i <= rowsOfBricks; i++) {
-            listOfBricks[i - 1] = createBrickRow(brickWidth, brickHeight, i, bricksPerRow, wallWidth,
-                    bufferSize, brickImage, bcs, brickCounter);
-        }
-        return listOfBricks;
+    public GameObject createBrick(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable,
+                                  CollisionStrategy collisionStrategy, Counter brickCounter) {
+        return new Brick(topLeftCorner, dimensions, renderable, collisionStrategy, brickCounter);
     }
 
-    private GameObject[] createBrickRow(float brickWidth, int brickHeight, int rowIndex, int bricksPerRow,
-                                        int wallWidth, int bufferSize, Renderable brickImage,
-                                        CollisionStrategy strat, Counter brickCounter) {
-        Vector2 brickDimension = new Vector2(brickWidth, brickHeight);
-        GameObject[] row = new GameObject[bricksPerRow];
-        for (int i = 0; i < bricksPerRow; i++) {
-
-            Vector2 topLeft = new Vector2((i * (bufferSize + brickWidth)) + wallWidth,
-                    rowIndex * (brickHeight + bufferSize) + wallWidth);
-            GameObject brick = new Brick(topLeft, brickDimension, brickImage, strat, brickCounter);
-            row[i] = brick;
-        }
-        return row;
-    }
-
-
-
-    public GameObject createNumericLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions, Counter lives, GameObjectCollection gameObjects) {
+    public GameObject createNumericLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions, Counter lives,
+                                               GameObjectCollection gameObjects) {
         return new NumericLifeDisplay(topLeftCorner, dimensions, lives, gameObjects);
     }
 
-    public GameObject createGraphicalLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable,
+    public GameObject createGraphicalLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions,
+                                                 Renderable renderable,
                                                  float indent, Counter lives, int maxLives,
                                                  GameObjectCollection gameObjects) {
-        return new GraphicalLifeDisplay(topLeftCorner, dimensions, indent, lives, maxLives, gameObjects, renderable);
+        return new GraphicalLifeDisplay(topLeftCorner, dimensions, indent, lives, maxLives, gameObjects,
+                renderable);
     }
 
-    public GameObject createLifeCounter(Vector2 topLeftCorner, Vector2 dimensions, ImageReader imageReader, Counter lives,  float objectSize,
+    public GameObject createLifeCounter(Vector2 topLeftCorner, Vector2 dimensions, ImageReader imageReader,
+                                        Counter lives, float objectSize,
                                         int buffer, GameObjectCollection gameObjects) {
-        return new LifeCounter(topLeftCorner, dimensions, imageReader, lives, objectSize, buffer, gameObjects, this);
+        return new LifeCounter(topLeftCorner, dimensions, imageReader, lives, objectSize, buffer, gameObjects,
+                this);
     }
 
     public GameObject createFallingLife(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable,
-                                        Vector2 windowDimensions, GameObjectCollection gameObjects, LifeCounter lifeCounter) {
-        return new FallingLife(topLeftCorner, dimensions, renderable, windowDimensions, gameObjects, lifeCounter);
+                                        Vector2 windowDimensions, GameObjectCollection gameObjects,
+                                        LifeCounter lifeCounter) {
+        return new FallingLife(topLeftCorner, dimensions, renderable, windowDimensions, gameObjects,
+                lifeCounter);
     }
 
 }

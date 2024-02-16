@@ -10,6 +10,7 @@ import danogl.util.Vector2;
 
 public class LifeCounter extends GameObject {
     private static final int MAX_LIVES = 4; //todo what is this???
+    // todo: this was supposed to be the max life for the player for when add lives back
 
     private static final String LIFE_HEART_PATH = "assets/heart.png";
     private final NumericLifeDisplay numericLifeCounter;

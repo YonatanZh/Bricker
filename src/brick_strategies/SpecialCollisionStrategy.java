@@ -31,14 +31,13 @@ public class SpecialCollisionStrategy extends BasicCollisionStrategy implements 
 
     public SpecialCollisionStrategy(GameManager owner, GameObjectCollection gameObjects,
                                     GameObjectFactory gameObjectFactory,
-                                    Vector2 windowDimensions, int ballRadius, int ballSpeed,
+                                    Vector2 windowDimensions, int ballRadius,
                                     Vector2 paddleSize, LifeCounter lifeCounter) {
         super(gameObjects);
         this.owner = owner;
         this.gameObjectFactory = gameObjectFactory;
         this.windowDimensions = windowDimensions;
         this.ballRadius = ballRadius;
-        this.ballSpeed = ballSpeed;
         this.paddleSize = paddleSize;
         this.rand = new Random();
         this.lifeCounter = lifeCounter;
@@ -54,8 +53,8 @@ public class SpecialCollisionStrategy extends BasicCollisionStrategy implements 
         int behavior = rand.nextInt() % RANDOM_FACTOR;
 
         switch (behavior) {
-            case 3:
-                behaviorFactory.createExtraPuck(ballRadius, ballSpeed, thisObj.getCenter()).behave();
+            case 0:
+                behaviorFactory.createExtraPuck(ballRadius, thisObj.getCenter()).behave();
                 break;
             case 1:
                 if (paddleCounter.value() == 0) {
@@ -65,7 +64,7 @@ public class SpecialCollisionStrategy extends BasicCollisionStrategy implements 
             case 2:
                 behaviorFactory.createCameraChange(ball, owner).behave();
                 break;
-            case 0:
+            case 3:
                 behaviorFactory.createExtraLife(thisObj.getCenter(), new Vector2(20, 20), windowDimensions, gameObjects, gameObjectFactory, lifeCounter).behave();
                 break;
             default:

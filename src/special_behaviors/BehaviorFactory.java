@@ -29,8 +29,8 @@ public class BehaviorFactory {
         return new ExtraPaddle(gameObjects, gameObjectFactory, size, windowDimensions, paddleCounter);
     }
 
-    public SpecialBehaviors createExtraPuck(int ballRadius, int ballSpeed, Vector2 position) {
-        return new ExtraPuck(gameObjects, gameObjectFactory, ballRadius, ballSpeed, position);
+    public SpecialBehaviors createExtraPuck(int ballRadius, Vector2 position) {
+        return new ExtraPuck(gameObjects, gameObjectFactory, ballRadius, position);
     }
 
     public SpecialBehaviors createCameraChange(GameObject objToFollow, GameManager owner) {

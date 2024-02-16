@@ -1,12 +1,16 @@
 package main;
 
+import brick_strategies.CollisionStrategy;
+import brick_strategies.SpecialCollisionStrategy;
 import danogl.GameManager;
 import danogl.GameObject;
+import danogl.collisions.GameObjectCollection;
 import danogl.collisions.Layer;
 import danogl.gui.*;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Counter;
 import danogl.util.Vector2;
+import gameobjects.Brick;
 import gameobjects.GameObjectFactory;
 import gameobjects.LifeCounter;
 import gameobjects.Paddle;
@@ -29,7 +33,6 @@ public class BrickerGameManager extends GameManager {
 
     // assets paths
     private static final String BALL_PATH = "assets/ball.png";
-    private static final String LIFE_HEART_PATH = "assets/heart.png";
     private static final String BALL_SOUND_PATH = "assets/blop_cut_silenced.wav";
     private static final String PADDLE_PATH = "assets/paddle.png";
     private static final String BACKGROUND_PATH = "assets/DARK_BG2_small.jpeg";
@@ -121,8 +124,7 @@ public class BrickerGameManager extends GameManager {
                 imageReader, lives, LIVES_SQUARE_SIZE, BUFFER ,gameObjects());
 
         GameObject[][] bricks = new GameObject[rowsOfBricks][bricksPerRow];
-        bricks = gameObjectFactory.createBrick(bricks, BRICK_PATH, WALL_WIDTH, BRICK_HEIGHT, BUFFER,
-                gameObjects(), this.bricksPerRow, this.rowsOfBricks, this.brickCounter, lifeCounter);
+        bricks = createBricks(bricks);
         addBricks(bricks);
 
     }
@@ -136,6 +138,36 @@ public class BrickerGameManager extends GameManager {
             resetBallAfterLoss();
         }
         removeOutOfBoundsItems();
+    }
+
+    private GameObject[][] createBricks(GameObject[][] listOfBricks) {
+        Renderable brickImage = imageReader.readImage(BRICK_PATH, false);
+        CollisionStrategy collisionStrategy = new SpecialCollisionStrategy(this, gameObjects(), gameObjectFactory,
+                windowDimensions, BALL_RADIUS,
+                new Vector2(PADDLE_WIDTH, PADDLE_HEIGHT), lifeCounter);
+
+        int distFromWall = (WALL_WIDTH * 2) + 1;
+        int allBufferSize = (bricksPerRow - 1) * BUFFER;
+        float brickWidth = (windowDimensions.x() - distFromWall - allBufferSize) / bricksPerRow;
+        for (int i = 1; i <= rowsOfBricks; i++) {
+            listOfBricks[i - 1] = createBrickRow(brickWidth, i, brickImage, collisionStrategy);
+        }
+        return listOfBricks;
+    }
+
+    private GameObject[] createBrickRow(float brickWidth, int rowIndex, Renderable brickImage,
+                                        CollisionStrategy strategy) {
+        Vector2 brickDimension = new Vector2(brickWidth, BRICK_HEIGHT);
+        GameObject[] row = new GameObject[bricksPerRow];
+        for (int i = 0; i < bricksPerRow; i++) {
+
+            Vector2 topLeft = new Vector2((i * (BUFFER + brickWidth)) + WALL_WIDTH,
+                    rowIndex * (BRICK_HEIGHT + BUFFER) + WALL_WIDTH);
+            GameObject brick = gameObjectFactory.createBrick(topLeft, brickDimension, brickImage, strategy,
+                    brickCounter);
+            row[i] = brick;
+        }
+        return row;
     }
 
     private void setBallVelocity(GameObject ball) {
