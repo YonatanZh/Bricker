@@ -3,6 +3,7 @@ package gameobjects;
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
 import danogl.collisions.Layer;
+import danogl.gui.ImageReader;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Counter;
 import danogl.util.Vector2;
@@ -10,46 +11,51 @@ import danogl.util.Vector2;
 public class LifeCounter extends GameObject {
     private static final int MAX_LIVES = 4; //todo what is this???
 
+    private static final String LIFE_HEART_PATH = "assets/heart.png";
     private final NumericLifeDisplay numericLifeCounter;
     private final GraphicalLifeDisplay graphicalLives;
     private final Counter lives;
-    private final Vector2 topLeftCorner;
-    private final float objectSize;
-    private final int buffer;
+    private final Vector2 lifeDimensions;
+    Renderable lifeImage;
 
 
 
-    public LifeCounter(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable, int lives, float objectSize,
+    public LifeCounter(Vector2 topLeftCorner, Vector2 dimensions, ImageReader imageReader, Counter lives, float objectSize,
                        int buffer, GameObjectCollection gameObjects, GameObjectFactory gameObjectFactory) {
         super(topLeftCorner, dimensions, null);
-        this.lives = new Counter(lives);
-        this.topLeftCorner = topLeftCorner;
-        this.objectSize = objectSize;
-        this.buffer = buffer;
-        Vector2 lifeDimensions = new Vector2(objectSize, objectSize);
+        this.lives = lives;
+        this.lifeImage = imageReader.readImage(LIFE_HEART_PATH, true);
+        this.lifeDimensions = new Vector2(objectSize, objectSize);
         this.numericLifeCounter = (NumericLifeDisplay) gameObjectFactory.createNumericLifeDisplay(topLeftCorner,
                 lifeDimensions, this.lives, gameObjects);
 
         Vector2 indentation = new Vector2(objectSize + buffer, 0);
         this.graphicalLives = (GraphicalLifeDisplay) gameObjectFactory.createGraphicalLifeDisplay(topLeftCorner.add(indentation),
-                lifeDimensions, renderable, objectSize, buffer, this.lives, gameObjects);
+                lifeDimensions, lifeImage, objectSize + buffer, this.lives, MAX_LIVES, gameObjects);
     }
 
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
-        if (lives.value() == 0) {
-
-        }
     }
 
     public void gainLife() {
+        if (lives.value() < MAX_LIVES) {
+            lives.increment();
+            graphicalLives.gainLife(lifeDimensions, lives.value() - 1);
+            numericLifeCounter.gainLife();
+        }
     }
 
-
-
+    public void createLife(GameObjectFactory gameObjectFactory, Vector2 topLeftCorner, Vector2 dimensions,
+                           Vector2 velocity, Vector2 windowDimensions, GameObjectCollection gameObjects) {
+        FallingLife life = (FallingLife) gameObjectFactory.createFallingLife(topLeftCorner, dimensions, lifeImage,
+                windowDimensions, gameObjects, this);
+        life.setCenter(topLeftCorner);
+        life.setVelocity(velocity);
+        gameObjects.addGameObject(life, danogl.collisions.Layer.DEFAULT);
+    }
     public void loseLife() {
-        lives.decrement();
         graphicalLives.loseLife();
         numericLifeCounter.loseLife();
     }

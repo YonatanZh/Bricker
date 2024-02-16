@@ -12,13 +12,12 @@ public class FallingLife extends GameObject {
     private final Vector2 windowDimensions;
     private final LifeCounter lifeCounter;
 
-    public FallingLife(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable, Vector2 velocity,
+    public FallingLife(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable,
                         Vector2 windowDimensions, GameObjectCollection gameObjects, LifeCounter lifeCounter) {
             super(topLeftCorner, dimensions, renderable);
             this.gameObjects = gameObjects;
             this.windowDimensions = windowDimensions;
             this.lifeCounter = lifeCounter;
-
         }
 
         @Override
@@ -41,5 +40,6 @@ public class FallingLife extends GameObject {
         public void onCollisionEnter(GameObject other, Collision collision) {
             super.onCollisionEnter(other, collision);
             this.lifeCounter.gainLife();
+            gameObjects.removeGameObject(this);
         }
 }

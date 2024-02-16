@@ -59,7 +59,7 @@ public class BrickerGameManager extends GameManager {
     private GameObject ball;
     private GameObject paddle;
     private LifeCounter lifeCounter;
-    private int lives;
+    private Counter lives;
     private final int rowsOfBricks;
     private final int bricksPerRow;
     private Counter brickCounter;
@@ -71,7 +71,7 @@ public class BrickerGameManager extends GameManager {
         this.windowDimensions = new Vector2(WIDTH, HEIGHT);
         this.bricksPerRow = DEFAULT_BRICK_PER_ROW;
         this.rowsOfBricks = DEFAULT_ROW_OF_BRICKS;
-        this.lives = DEFAULT_LIVES;
+        this.lives = new Counter(DEFAULT_LIVES);
     }
 
     public BrickerGameManager(Vector2 windowDimensions, int bricksPerRow, int rowsOfBricks) {
@@ -79,7 +79,7 @@ public class BrickerGameManager extends GameManager {
         this.windowDimensions = windowDimensions;
         this.rowsOfBricks = rowsOfBricks;
         this.bricksPerRow = bricksPerRow;
-        this.lives = DEFAULT_LIVES;
+        this.lives = new Counter(DEFAULT_LIVES);
     }
 
     @Override
@@ -114,19 +114,16 @@ public class BrickerGameManager extends GameManager {
         this.paddle = gameObjectFactory.createPaddle(PADDLE_PATH, paddleSize, paddlePosition);
         gameObjects().addGameObject(this.paddle);
 
-        GameObject[][] bricks = new GameObject[rowsOfBricks][bricksPerRow];
-        bricks = gameObjectFactory.createBrick(bricks, BRICK_PATH, WALL_WIDTH, BRICK_HEIGHT, BUFFER,
-                gameObjects(),
-                this.bricksPerRow, this.rowsOfBricks, this.brickCounter);
-        addBricks(bricks);
 
-        Renderable ballImage = imageReader.readImage(LIFE_HEART_PATH, true);
         Vector2 livesTopLeftCorner = new Vector2(LIVES_INDENT_SIZE, windowDimensions.y() - LIVES_SQUARE_SIZE);
         Vector2 livesDimensions = new Vector2((LIVES_SQUARE_SIZE + BUFFER) * DEFAULT_LIVES, LIVES_SQUARE_SIZE);
         this.lifeCounter = (LifeCounter) gameObjectFactory.createLifeCounter(livesTopLeftCorner, livesDimensions,
-                ballImage, DEFAULT_LIVES, LIVES_SQUARE_SIZE, BUFFER ,gameObjects());
+                imageReader, lives, LIVES_SQUARE_SIZE, BUFFER ,gameObjects());
 
-
+        GameObject[][] bricks = new GameObject[rowsOfBricks][bricksPerRow];
+        bricks = gameObjectFactory.createBrick(bricks, BRICK_PATH, WALL_WIDTH, BRICK_HEIGHT, BUFFER,
+                gameObjects(), this.bricksPerRow, this.rowsOfBricks, this.brickCounter, lifeCounter);
+        addBricks(bricks);
 
     }
 
@@ -173,7 +170,7 @@ public class BrickerGameManager extends GameManager {
     }
 
     private void resetBallAfterLoss(){
-        lives--;
+        lives.decrement();
         this.lifeCounter.loseLife();
         checkEndGame();
         gameObjects().removeGameObject(ball);
@@ -192,7 +189,6 @@ public class BrickerGameManager extends GameManager {
 
     private void resetWindowDialog(String prompt) {
         if (windowController.openYesNoDialog(prompt)) {
-            lives = DEFAULT_LIVES;
             this.windowController.resetGame();
         } else {
             windowController.closeWindow();
@@ -200,7 +196,7 @@ public class BrickerGameManager extends GameManager {
     }
 
     private void checkEndGame() {
-        if (lives == 0) {
+        if (lives.value() == 0) {
             resetWindowDialog(LOSE_PROMPT);
         }
     }

@@ -80,12 +80,12 @@ public class GameObjectFactory {
     //todo move this logic to the game manager - yonatan
     public GameObject[][] createBrick(GameObject[][] listOfBricks, String brickImagePath, int wallWidth,
                                       int brickHeight, int bufferSize, GameObjectCollection gameObjects,
-                                      int bricksPerRow, int rowsOfBricks, Counter brickCounter) {
+                                      int bricksPerRow, int rowsOfBricks, Counter brickCounter, LifeCounter lifeCounter) {
         Renderable brickImage = imageReader.readImage(brickImagePath, false);
         // todo figure out how to get rid of the magic numbers - yonatan
         CollisionStrategy bcs = new SpecialCollisionStrategy(owner, gameObjects, this, windowDimensions, 10,
                 10,
-                new Vector2(100, 15));
+                new Vector2(100, 15), lifeCounter);
 
         int distFromWall = (wallWidth * 2) + 1;
         int allBufferSize = (bricksPerRow - 1) * bufferSize;
@@ -119,19 +119,19 @@ public class GameObjectFactory {
     }
 
     public GameObject createGraphicalLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable,
-                                                 float objectSize, int buffer, Counter lives,
+                                                 float indent, Counter lives, int maxLives,
                                                  GameObjectCollection gameObjects) {
-        return new GraphicalLifeDisplay(topLeftCorner, dimensions, renderable, objectSize, buffer, lives, gameObjects);
+        return new GraphicalLifeDisplay(topLeftCorner, dimensions, indent, lives, maxLives, gameObjects, renderable);
     }
 
-    public GameObject createLifeCounter(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable, int lives,  float objectSize,
+    public GameObject createLifeCounter(Vector2 topLeftCorner, Vector2 dimensions, ImageReader imageReader, Counter lives,  float objectSize,
                                         int buffer, GameObjectCollection gameObjects) {
-        return new LifeCounter(topLeftCorner, dimensions, renderable, lives, objectSize, buffer, gameObjects, this);
+        return new LifeCounter(topLeftCorner, dimensions, imageReader, lives, objectSize, buffer, gameObjects, this);
     }
 
     public GameObject createFallingLife(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable,
-                                        Vector2 velocity, Vector2 windowDimensions, GameObjectCollection gameObjects, LifeCounter lifeCounter) {
-        return new FallingLife(topLeftCorner, dimensions, renderable, velocity, windowDimensions, gameObjects, lifeCounter);
+                                        Vector2 windowDimensions, GameObjectCollection gameObjects, LifeCounter lifeCounter) {
+        return new FallingLife(topLeftCorner, dimensions, renderable, windowDimensions, gameObjects, lifeCounter);
     }
 
 }
