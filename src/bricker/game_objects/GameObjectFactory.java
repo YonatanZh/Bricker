@@ -5,11 +5,14 @@ import bricker.brick_strategies.CollisionStrategy;
 import danogl.GameManager;
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
+import danogl.collisions.Layer;
 import danogl.components.CoordinateSpace;
 import danogl.gui.*;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Counter;
 import danogl.util.Vector2;
+
+import static bricker.main.Constants.*;
 
 /**
  * A class for creating game objects.
@@ -138,66 +141,53 @@ public class GameObjectFactory {
         return new Brick(topLeftCorner, dimensions, renderable, collisionStrategy, brickCounter);
     }
 
-    //todo change the documentation
-
     /**
-     * Creates a life counter game object.
+     * Creates a numeric life counter game object.
      *
      * @param topLeftCorner the top left corner of the life counter.
      * @param dimensions    the dimensions of the life counter.
-     * @param lives         the counter for the lives.
-     * @param gameObjects   the collection of game objects.
-     * @return a life counter game object.
+     * @param lives         the life counter
+     * @return a numeric life counter game object.
      */
-    public GameObject createNumericLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions, Counter lives,
-                                               GameObjectCollection gameObjects) {
-        return new NumericLifeDisplay(topLeftCorner, dimensions, lives, gameObjects);
+    public GameObject createNumericLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions, Counter lives) {
+        return new NumericLifeDisplay(topLeftCorner, dimensions, lives);
     }
 
-    //todo change the documentation
-
     /**
-     * Creates a graphical life display game object.
+     * Creates a graphical life counter game object.
      *
-     * @param topLeftCorner the top left corner of the graphical life display.
-     * @param dimensions    the dimensions of the graphical life display.
-     * @param renderable    the renderable object that will draw the life display.
-     * @param indent        the indent between the life images.
-     * @param lives         the counter for the lives.
-     * @param maxLives      the maximum number of lives.
-     * @param gameObjects   the collection of game objects.
-     * @return a graphical life display game object.
+     * @param topLeftCorner the top left corner of the life counter.
+     * @param dimensions    the dimensions of the life counter.
+     * @param indent        the indent between the lives
+     * @param lives         the life counter
+     * @param maxLives      the maximum number of lives
+     * @param gameObjects   a collection of all the game objects
+     * @return a life counter game object.
      */
     public GameObject createGraphicalLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions,
-                                                 Renderable renderable,
                                                  float indent, Counter lives, int maxLives,
                                                  GameObjectCollection gameObjects) {
-        return new GraphicalLifeDisplay(topLeftCorner, dimensions, indent, lives, maxLives, gameObjects,
-                renderable);
+        Renderable lifeImage = imageReader.readImage(LIFE_HEART_PATH, true);
+        return new GraphicalLifeDisplay(topLeftCorner, dimensions, indent, lives, gameObjects, maxLives,
+                lifeImage);
     }
-
-    //todo change the documentation
 
     /**
      * Creates a life counter game object.
      *
-     * @param topLeftCorner the top left corner of the life counter.
-     * @param dimensions    the dimensions of the life counter.
-     * @param imageReader   the image reader for reading images.
-     * @param lives         the counter for the lives.
-     * @param objectSize    the size of the life images.
-     * @param buffer        the buffer between the life images.
-     * @param gameObjects   the collection of game objects.
+     * @param topLeftCorner        the top left corner of the life counter.
+     * @param dimensions           the dimensions of the life counter.
+     * @param lives                the counter for the lives.
+     * @param numericLifeCounter   the numeric life counter.
+     * @param graphicalLives       the graphical life display.
      * @return a life counter game object.
      */
-    public GameObject createLifeCounter(Vector2 topLeftCorner, Vector2 dimensions, ImageReader imageReader,
-                                        Counter lives, float objectSize,
-                                        int buffer, GameObjectCollection gameObjects) {
-        return new LifeCounter(topLeftCorner, dimensions, imageReader, lives, objectSize, buffer, gameObjects,
-                this);
+    public GameObject createLifeCounter(Vector2 topLeftCorner, Vector2 dimensions, Counter lives,
+                                        NumericLifeDisplay numericLifeCounter,
+                                        GraphicalLifeDisplay graphicalLives) {
+        return new LifeCounter(topLeftCorner, dimensions, lives, numericLifeCounter,
+                graphicalLives);
     }
-
-    //todo change the documentation
 
     /**
      * Creates a falling life game object.

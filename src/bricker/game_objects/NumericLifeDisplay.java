@@ -1,4 +1,4 @@
-package gameobjects;
+package bricker.game_objects;
 
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
@@ -20,18 +20,16 @@ public class NumericLifeDisplay extends GameObject {
     private final Counter lives;
     private final TextRenderable lifeCounter;
 
-    public NumericLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions, Counter lives,
-                              GameObjectCollection gameObjects) {
+    public NumericLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions, Counter lives) {
         super(topLeftCorner, dimensions, null);
         this.lifeCounter = new TextRenderable(Integer.toString(lives.value()));
         this.lives = lives;
         setColor();
         this.renderer().setRenderable(lifeCounter);
         this.setCenter(topLeftCorner);
-        gameObjects.addGameObject(this, Layer.UI);
     }
 
-    public void loseLife() {
+    public void updateDisplay() {
         this.lifeCounter.setString(Integer.toString(lives.value()));
         setColor();
     }
@@ -44,10 +42,5 @@ public class NumericLifeDisplay extends GameObject {
         } else {
             lifeCounter.setColor(Color.RED);
         }
-    }
-
-    public void gainLife() {
-        this.lifeCounter.setString(Integer.toString(lives.value()));
-        setColor();
     }
 }

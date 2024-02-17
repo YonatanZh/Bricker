@@ -1,11 +1,14 @@
 package bricker.special_behaviors;
 
+import bricker.game_objects.FallingLife;
 import danogl.collisions.GameObjectCollection;
+import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
 import bricker.game_objects.GameObjectFactory;
 import bricker.game_objects.LifeCounter;
 
 import static bricker.main.Constants.HEART_VELOCITY;
+import static bricker.main.Constants.LIFE_HEART_PATH;
 
 /**
  * A SpecialBehavior that creates an extra life when the puck collides with the paddle.
@@ -16,6 +19,7 @@ public class ExtraLife implements SpecialBehaviors {
     private final GameObjectCollection gameObjects;
     private final GameObjectFactory gameObjectFactory;
     private final LifeCounter lifeCounter;
+    private final Renderable lifeImage;
 
     /**
      * Creates a new ExtraLife.
@@ -26,23 +30,26 @@ public class ExtraLife implements SpecialBehaviors {
      * @param gameObjects        the collection of game objects.
      * @param gameObjectFactory the factory for creating game objects.
      */
-    public ExtraLife(Vector2 dimensions, LifeCounter lifeCounter,
+    public ExtraLife(Vector2 dimensions, Renderable lifeImage, LifeCounter lifeCounter,
                      Vector2 windowDimensions, GameObjectCollection gameObjects, GameObjectFactory gameObjectFactory) {
         this.dimensions = dimensions;
         this.windowDimensions = windowDimensions;
         this.gameObjects = gameObjects;
         this.gameObjectFactory = gameObjectFactory;
         this.lifeCounter = lifeCounter;
+        this.lifeImage = lifeImage;
     }
 
     /**
-     * Creates a new life at the given position.
+     * This method is used to define the behavior of a special object.
      *
-     * @param position1 the position of the puck.
-     * @param position2 the position of the paddle.
+     * @param position1 The location to activate the behavior.
+     * @param position2 The location to activate the behavior.
      */
     @Override
     public void behave(Vector2 position1, Vector2 position2) {
-        lifeCounter.createLife(gameObjectFactory, position1, dimensions, HEART_VELOCITY, windowDimensions, gameObjects);
+        FallingLife life = (FallingLife) gameObjectFactory.createFallingLife(position1, dimensions, lifeImage,
+                windowDimensions, gameObjects, lifeCounter);
+        lifeCounter.createLife(position1, life, HEART_VELOCITY, gameObjects);
     }
 }

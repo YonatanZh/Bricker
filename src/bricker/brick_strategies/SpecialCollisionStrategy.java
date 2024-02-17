@@ -46,7 +46,7 @@ public class SpecialCollisionStrategy extends BasicCollisionStrategy implements 
         int behavior = rand.nextInt() % SPECIAL_BEHAVIOR_ODDS;
 
         switch (behavior) {
-            case EXTRA_PUCK:
+            case 8:
                 allBehaviors[behavior].behave(thisObj.getCenter(), null);
                 break;
             case EXTRA_PADDLE:
@@ -55,8 +55,8 @@ public class SpecialCollisionStrategy extends BasicCollisionStrategy implements 
             case CAMERA_CHANGE:
                 allBehaviors[behavior].behave(null, null);
                 break;
-            case EXTRA_LIFE:
-                allBehaviors[behavior].behave(thisObj.getCenter(), null);
+            case 0:
+                allBehaviors[3].behave(thisObj.getCenter(), null);
                 break;
             case DOUBLE:
                 allBehaviors[behavior].behave(thisObj.getCenter(), windowDimensions);

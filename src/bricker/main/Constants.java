@@ -112,6 +112,10 @@ public class Constants {
 
     // lives constants
     /**
+     * The maximum number of lives.
+     */
+    public static final int MAX_LIVES = 4;
+    /**
      * The threshold for the color of the numerical lives display to be green.
      */
     public static final int GREEN_THRESHOLD = 3;
@@ -165,7 +169,7 @@ public class Constants {
     /**
      * The distribution of special behaviors.
      */
-    public static final int SPECIAL_BEHAVIOR_ODDS = 10;
+    public static final int SPECIAL_BEHAVIOR_ODDS = 1; //todo change!!!
     /**
      * The maximum number of special behaviors that can be on a brick.
      */

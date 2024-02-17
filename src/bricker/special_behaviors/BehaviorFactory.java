@@ -2,6 +2,7 @@ package bricker.special_behaviors;
 
 import danogl.GameManager;
 import danogl.collisions.GameObjectCollection;
+import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
 import bricker.game_objects.GameObjectFactory;
 import bricker.game_objects.LifeCounter;
@@ -70,10 +71,11 @@ public class BehaviorFactory {
      * @param lifeCounter       The life counter of the game.
      * @return The extra life behavior.
      */
-    public SpecialBehaviors createExtraLife(Vector2 dimensions,
+    public SpecialBehaviors createExtraLife(Vector2 dimensions, Renderable lifeImage,
                                             Vector2 windowDimensions, GameObjectCollection gameObjects,
                                             GameObjectFactory gameObjectFactory, LifeCounter lifeCounter) {
-        return new ExtraLife(dimensions, lifeCounter, windowDimensions, gameObjects, gameObjectFactory);
+        return new ExtraLife(dimensions, lifeImage, lifeCounter, windowDimensions, gameObjects,
+                gameObjectFactory);
     }
 
     /**

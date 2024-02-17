@@ -1,64 +1,70 @@
-package gameobjects;
+package bricker.game_objects;
 
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
-import danogl.collisions.Layer;
-import danogl.gui.ImageReader;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Counter;
 import danogl.util.Vector2;
 
-import static bricker.main.Constants.LIFE_HEART_PATH;
+import static bricker.main.Constants.MAX_LIVES;
 
+/**
+ * A class representing the life counter. It keeps track of the lives and updates the display when a life is lost or gained.
+ */
 public class LifeCounter extends GameObject {
-    private static final int MAX_LIVES = 4; //todo what is this???
-    // todo: this was supposed to be the max life for the player for when add lives back. add this to the
-    //  constants file
-
     private final NumericLifeDisplay numericLifeCounter;
     private final GraphicalLifeDisplay graphicalLives;
     private final Counter lives;
-    private final Vector2 lifeDimensions;
-    Renderable lifeImage;
 
-    public LifeCounter(Vector2 topLeftCorner, Vector2 dimensions, ImageReader imageReader, Counter lives, float objectSize,
-                       int buffer, GameObjectCollection gameObjects, GameObjectFactory gameObjectFactory) {
+    /**
+     * Creates a new life counter.
+     *
+     * @param topLeftCorner       the top left corner of the object
+     * @param dimensions          the dimensions of the object
+     * @param lives               the counter for the lives
+     * @param numericLifeCounter  the numeric life counter
+     * @param graphicalLives      the graphical life counter
+     */
+    public LifeCounter(Vector2 topLeftCorner, Vector2 dimensions, Counter lives,
+                       NumericLifeDisplay numericLifeCounter,
+                       GraphicalLifeDisplay graphicalLives) {
         super(topLeftCorner, dimensions, null);
         this.lives = lives;
-        this.lifeImage = imageReader.readImage(LIFE_HEART_PATH, true);
-        this.lifeDimensions = new Vector2(objectSize, objectSize);
-        this.numericLifeCounter = (NumericLifeDisplay) gameObjectFactory.createNumericLifeDisplay(topLeftCorner,
-                lifeDimensions, this.lives, gameObjects);
-
-        Vector2 indentation = new Vector2(objectSize + buffer, 0);
-        this.graphicalLives = (GraphicalLifeDisplay) gameObjectFactory.createGraphicalLifeDisplay(topLeftCorner.add(indentation),
-                lifeDimensions, lifeImage, objectSize + buffer, this.lives, MAX_LIVES, gameObjects);
+        this.numericLifeCounter = numericLifeCounter;
+        this.graphicalLives = graphicalLives;
     }
 
-    @Override
-    public void update(float deltaTime) {
-        super.update(deltaTime);
-    }
-
+    /**
+     * Updates the life counter.
+     */
     public void gainLife() {
         if (lives.value() < MAX_LIVES) {
             lives.increment();
-            graphicalLives.gainLife(lifeDimensions, lives.value() - 1);
-            numericLifeCounter.gainLife();
+            graphicalLives.gainLife(lives.value() - 1);
+            numericLifeCounter.updateDisplay();
         }
     }
 
-    public void createLife(GameObjectFactory gameObjectFactory, Vector2 topLeftCorner, Vector2 dimensions,
-                           Vector2 velocity, Vector2 windowDimensions, GameObjectCollection gameObjects) {
-        FallingLife life = (FallingLife) gameObjectFactory.createFallingLife(topLeftCorner, dimensions, lifeImage,
-                windowDimensions, gameObjects, this);
+    /**
+     *
+     * @param topLeftCorner
+     * @param life
+     * @param velocity
+     * @param gameObjects
+     */
+    public void createLife(Vector2 topLeftCorner, FallingLife life, Vector2 velocity,
+                           GameObjectCollection gameObjects) {
         life.setCenter(topLeftCorner);
         life.setVelocity(velocity);
         gameObjects.addGameObject(life, danogl.collisions.Layer.DEFAULT);
     }
+
+    /**
+     * Updates the life counter when a life is lost.
+     */
     public void loseLife() {
         graphicalLives.loseLife();
-        numericLifeCounter.loseLife();
+        numericLifeCounter.updateDisplay();
     }
 
 }

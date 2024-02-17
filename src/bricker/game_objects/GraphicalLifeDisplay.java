@@ -12,36 +12,42 @@ import danogl.util.Vector2;
  */
 public class
 GraphicalLifeDisplay extends GameObject {
-    private final GameObjectCollection gameObjects;
+    private final Vector2 lifeDimensions;
+    private Vector2 positionForNewLife;
+    private final float indent;
     private final Counter lives;
     private final GameObject[] allGraphicalLives;
+    private final GameObjectCollection gameObjects;
     private final Renderable renderable;
-    private final float indent;
-    private Vector2 positionForNewLife;
 
     /**
      * Creates a new GraphicalLifeDisplay object.
-     * @param topLeftCorner the position of the top left corner of the life display
-     * @param dimensions the dimensions of the life display
-     * @param indent the indent between the lives
-     * @param lives the life counter
-     * @param maxLives the maximum number of lives
-     * @param gameObjects a collection of all the game objects
-     * @param renderable that presents an image of the life
+     *
+     * @param topLeftCorner the position of the top left corner of the life
+     * @param dimensions    the dimensions of the life
+     * @param indent        the indent between the lives
+     * @param lives         the life counter
+     * @param gameObjects   a collection of all the game objects
+     * @param maxLives      the maximum number of lives
+     * @param renderable    that presents an image of the life
      */
-    public GraphicalLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions,
-                                float indent, Counter lives, int maxLives,
-                                GameObjectCollection gameObjects, Renderable renderable) {
+    public GraphicalLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions, float indent, Counter lives,
+                                GameObjectCollection gameObjects, int maxLives, Renderable renderable) {
         super(topLeftCorner, dimensions, renderable);
+        this.positionForNewLife = topLeftCorner;
+        this.indent = indent;
+        this.lives = lives;
+        this.gameObjects = gameObjects;
         this.allGraphicalLives = new GameObject[maxLives];
         this.renderable = renderable;
-        this.gameObjects = gameObjects;
-        this.lives = lives;
-        this.indent = indent;
-        positionForNewLife = topLeftCorner;
+        this.lifeDimensions = dimensions;
+        setInitialLives();
+    }
+
+    private void setInitialLives() {
         for (int i = 0; i < lives.value(); i++) {
-            gainLife(dimensions, i);
-            this.positionForNewLife = topLeftCorner.add(new Vector2(this.indent * (i+1), 0));
+            gainLife(i);
+            this.positionForNewLife = positionForNewLife.add(new Vector2(this.indent, 0));
         }
     }
 
@@ -55,11 +61,11 @@ GraphicalLifeDisplay extends GameObject {
 
     /**
      * Adds a graphical life to the display.
-     * @param objectSize the size of the life
+     *
      * @param index the index of the life in the array
      */
-    public void gainLife(Vector2 objectSize, int index) {
-        allGraphicalLives[index] = new GameObject(positionForNewLife, objectSize, renderable);
+    public void gainLife(int index) {
+        allGraphicalLives[index] = new GameObject(positionForNewLife, lifeDimensions, renderable);
         allGraphicalLives[index].setCenter(positionForNewLife);
         gameObjects.addGameObject(allGraphicalLives[index], Layer.UI);
         this.positionForNewLife = positionForNewLife.add(new Vector2(this.indent, 0));
