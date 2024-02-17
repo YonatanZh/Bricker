@@ -25,14 +25,14 @@ public class SpecialCollisionStrategy extends BasicCollisionStrategy implements 
     private final Random rand;
     private final BehaviorFactory behaviorFactory;
     private final LifeCounter lifeCounter;
-    private GameManager owner;
-    private GameObjectFactory gameObjectFactory;
-    private Vector2 windowDimensions;
-    private int ballRadius;
-    private int ballSpeed;
-    private Vector2 paddleSize;
-    private Counter paddleCounter;
-    private Ball ball;
+    private final GameManager owner;
+    private final GameObjectFactory gameObjectFactory;
+    private final Vector2 windowDimensions;
+    private final int ballRadius;
+    private final int ballSpeed;
+    private final Vector2 paddleSize;
+    private final Counter paddleCounter;
+    private final Ball ball;
 
     /**
      * Constructor for the SpecialCollisionStrategy class.
