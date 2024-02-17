@@ -1,8 +1,6 @@
 package bricker.game_objects;
 
 import danogl.GameObject;
-import danogl.collisions.GameObjectCollection;
-import danogl.gui.rendering.Renderable;
 import danogl.util.Counter;
 import danogl.util.Vector2;
 
@@ -35,7 +33,7 @@ public class LifeCounter extends GameObject {
     }
 
     /**
-     * Updates the life counter.
+     * Updates the life counter when a life is gained, and the maximum number of lives is not reached.
      */
     public void gainLife() {
         if (lives.value() < MAX_LIVES) {
@@ -43,20 +41,6 @@ public class LifeCounter extends GameObject {
             graphicalLives.gainLife(lives.value() - 1);
             numericLifeCounter.updateDisplay();
         }
-    }
-
-    /**
-     *
-     * @param topLeftCorner
-     * @param life
-     * @param velocity
-     * @param gameObjects
-     */
-    public void createLife(Vector2 topLeftCorner, FallingLife life, Vector2 velocity,
-                           GameObjectCollection gameObjects) {
-        life.setCenter(topLeftCorner);
-        life.setVelocity(velocity);
-        gameObjects.addGameObject(life, danogl.collisions.Layer.DEFAULT);
     }
 
     /**

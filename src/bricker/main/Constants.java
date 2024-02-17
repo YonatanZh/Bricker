@@ -138,7 +138,7 @@ public class Constants {
     /**
      * The indentation form the right edge of the screen for the numerical lives display.
      */
-    public static final int LIVES_INDENT_SIZE = 50;
+    public static final int LIVES_INDENT_SIZE = 75;
 
 
     // special behavior constants
@@ -169,7 +169,7 @@ public class Constants {
     /**
      * The distribution of special behaviors.
      */
-    public static final int SPECIAL_BEHAVIOR_ODDS = 1; //todo change!!!
+    public static final int SPECIAL_BEHAVIOR_ODDS = 10;
     /**
      * The maximum number of special behaviors that can be on a brick.
      */

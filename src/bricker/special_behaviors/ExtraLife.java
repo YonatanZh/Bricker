@@ -8,7 +8,6 @@ import bricker.game_objects.GameObjectFactory;
 import bricker.game_objects.LifeCounter;
 
 import static bricker.main.Constants.HEART_VELOCITY;
-import static bricker.main.Constants.LIFE_HEART_PATH;
 
 /**
  * A SpecialBehavior that creates an extra life when the puck collides with the paddle.
@@ -50,6 +49,8 @@ public class ExtraLife implements SpecialBehaviors {
     public void behave(Vector2 position1, Vector2 position2) {
         FallingLife life = (FallingLife) gameObjectFactory.createFallingLife(position1, dimensions, lifeImage,
                 windowDimensions, gameObjects, lifeCounter);
-        lifeCounter.createLife(position1, life, HEART_VELOCITY, gameObjects);
+        life.setCenter(position1);
+        life.setVelocity(HEART_VELOCITY);
+        gameObjects.addGameObject(life, danogl.collisions.Layer.DEFAULT);
     }
 }

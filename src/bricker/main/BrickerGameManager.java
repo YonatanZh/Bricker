@@ -108,10 +108,6 @@ public class BrickerGameManager extends GameManager {
         this.paddle = gameObjectFactory.createPaddle(PADDLE_PATH, paddleSize, paddlePosition);
         gameObjects().addGameObject(this.paddle);
 
-
-        //todo refactor this. this creation of life counter breaks encapsulation. none of the objects
-        // should add themselves to the game.    once done need to handle the case of new game with more or
-        // less lives than default
         createLifeDisplay();
 
         createBehaviors();
@@ -152,6 +148,8 @@ public class BrickerGameManager extends GameManager {
                 allBehaviors[1], allBehaviors[2], allBehaviors[3]});
     }
 
+    // todo there's a problem with the spacing whenever a life is created or lost + plus the initial
+    //  spacing is off
     private void createLifeDisplay() {
         Vector2 livesTopLeftCorner = new Vector2(LIVES_INDENT_SIZE,
                 windowDimensions.y() - DROPPING_LIFE_SIZE);
@@ -251,6 +249,8 @@ public class BrickerGameManager extends GameManager {
 
     private void resetWindowDialog(String prompt) {
         if (windowController.openYesNoDialog(prompt)) {
+            lives.reset();
+            lives.increaseBy(DEFAULT_LIVES);
             this.windowController.resetGame();
         } else {
             windowController.closeWindow();
@@ -263,7 +263,6 @@ public class BrickerGameManager extends GameManager {
         }
     }
 
-    //todo check the problem of pressing W and the counters not resetting
     private void checkWinCondition() {
         if (brickCounter.value() == 0 || inputListener.isKeyPressed('W')) {
             resetWindowDialog(WIN_PROMPT);

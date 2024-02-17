@@ -20,6 +20,13 @@ public class NumericLifeDisplay extends GameObject {
     private final Counter lives;
     private final TextRenderable lifeCounter;
 
+    /**
+     * Creates a new NumericLifeDisplay object.
+     *
+     * @param topLeftCorner the position of the top left corner of the life
+     * @param dimensions    the dimensions of the life
+     * @param lives         the life counter
+     */
     public NumericLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions, Counter lives) {
         super(topLeftCorner, dimensions, null);
         this.lifeCounter = new TextRenderable(Integer.toString(lives.value()));
@@ -29,12 +36,15 @@ public class NumericLifeDisplay extends GameObject {
         this.setCenter(topLeftCorner);
     }
 
+    /**
+     * Updates the life counter when a life is lost or gained with the correct color.
+     */
     public void updateDisplay() {
         this.lifeCounter.setString(Integer.toString(lives.value()));
         setColor();
     }
 
-    public void setColor() {
+    private void setColor() {
         if (lives.value() >= GREEN_THRESHOLD) {
             lifeCounter.setColor(Color.GREEN);
         } else if (lives.value() == YELLOW_THRESHOLD) {

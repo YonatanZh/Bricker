@@ -47,7 +47,7 @@ public class FallingLife extends GameObject {
 
 
     /**
-     * A method that is called when an object collides with the paddle. Defines what objects it should collide with.
+     * Defines what objects it should collide with.
      *
      * @param other the object that the paddle collided with
      * @return if the object should collide with the paddle or not
