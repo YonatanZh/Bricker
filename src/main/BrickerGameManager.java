@@ -4,16 +4,14 @@ import brick_strategies.CollisionStrategy;
 import brick_strategies.SpecialCollisionStrategy;
 import danogl.GameManager;
 import danogl.GameObject;
-import danogl.collisions.GameObjectCollection;
 import danogl.collisions.Layer;
 import danogl.gui.*;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Counter;
 import danogl.util.Vector2;
-import gameobjects.Brick;
-import gameobjects.GameObjectFactory;
-import gameobjects.LifeCounter;
-import gameobjects.Paddle;
+import gameobjects.*;
+import special_behaviors.BehaviorFactory;
+import special_behaviors.SpecialBehaviors;
 
 import java.util.Random;
 
@@ -53,6 +51,11 @@ public class BrickerGameManager extends GameManager {
     // lives constants
     private static final int DEFAULT_LIVES = 3;
 
+    // todo figure out if needs to be documented
+    public static final int MAX_BEHAVIORS_PER_BRICK = 3;
+    private static final int BEHAVIOR_AMOUNT = 5;
+    private static final SpecialBehaviors[] allBehaviors = new SpecialBehaviors[BEHAVIOR_AMOUNT];
+
     private ImageReader imageReader;
     private SoundReader soundReader;
     private UserInputListener inputListener;
@@ -62,11 +65,12 @@ public class BrickerGameManager extends GameManager {
     private GameObject ball;
     private GameObject paddle;
     private LifeCounter lifeCounter;
-    private Counter lives;
+    private final Counter lives;
     private final int rowsOfBricks;
     private final int bricksPerRow;
     private Counter brickCounter;
     private Vector2 screenCenter;
+    private GameObject objectTracker;
 
 
     public BrickerGameManager() {
@@ -97,9 +101,8 @@ public class BrickerGameManager extends GameManager {
         this.brickCounter = new Counter(this.bricksPerRow * this.rowsOfBricks);
         this.screenCenter = windowDimensions.mult(0.5f);
 
-        this.gameObjectFactory = new GameObjectFactory(this ,imageReader, soundReader, inputListener,
+        this.gameObjectFactory = new GameObjectFactory(this, imageReader, soundReader, inputListener,
                 windowDimensions);
-
 
 
         GameObject background = gameObjectFactory.createBackground(BACKGROUND_PATH);
@@ -112,19 +115,32 @@ public class BrickerGameManager extends GameManager {
         setBallVelocity(ball);
         gameObjects().addGameObject(this.ball);
 
+        this.objectTracker = gameObjectFactory.createObjectTracker(ball, Vector2.ZERO,
+                windowDimensions.mult(1.2f), windowDimensions, this, ball);
+        gameObjects().addGameObject(this.objectTracker, Layer.UI);
+
         Vector2 paddleSize = new Vector2(PADDLE_WIDTH, PADDLE_HEIGHT);
         Vector2 paddlePosition = new Vector2(windowDimensions.x() / 2, windowDimensions.y() - 50);
         this.paddle = gameObjectFactory.createPaddle(PADDLE_PATH, paddleSize, paddlePosition);
         gameObjects().addGameObject(this.paddle);
 
 
+
+        //todo refactor this. this creation of life counter breaks encapsulation. none of the objects
+        // should add themselves to the game.    once done need to handle the case of new game with more or
+        // less lives than default
         Vector2 livesTopLeftCorner = new Vector2(LIVES_INDENT_SIZE, windowDimensions.y() - LIVES_SQUARE_SIZE);
-        Vector2 livesDimensions = new Vector2((LIVES_SQUARE_SIZE + BUFFER) * DEFAULT_LIVES, LIVES_SQUARE_SIZE);
-        this.lifeCounter = (LifeCounter) gameObjectFactory.createLifeCounter(livesTopLeftCorner, livesDimensions,
-                imageReader, lives, LIVES_SQUARE_SIZE, BUFFER ,gameObjects());
+        Vector2 livesDimensions = new Vector2((LIVES_SQUARE_SIZE + BUFFER) * DEFAULT_LIVES,
+                LIVES_SQUARE_SIZE);
+
+        this.lifeCounter = (LifeCounter) gameObjectFactory.createLifeCounter(livesTopLeftCorner,
+                livesDimensions,
+                imageReader, lives, LIVES_SQUARE_SIZE, BUFFER, gameObjects());
+
+        createBehaviors();
 
         GameObject[][] bricks = new GameObject[rowsOfBricks][bricksPerRow];
-        bricks = createBricks(bricks);
+        createBricks(bricks);
         addBricks(bricks);
 
     }
@@ -140,11 +156,18 @@ public class BrickerGameManager extends GameManager {
         removeOutOfBoundsItems();
     }
 
-    private GameObject[][] createBricks(GameObject[][] listOfBricks) {
+    private void createBehaviors(){
+        BehaviorFactory behaviorFactory = new BehaviorFactory(gameObjects(), gameObjectFactory,
+                windowDimensions, lifeCounter);
+        allBehaviors[0] = behaviorFactory.createExtraPuck(BALL_RADIUS);
+        allBehaviors[1] = behaviorFactory.createExtraPaddle(new Vector2(PADDLE_WIDTH, PADDLE_HEIGHT));
+    }
+
+    private void createBricks(GameObject[][] listOfBricks) {
         Renderable brickImage = imageReader.readImage(BRICK_PATH, false);
-        CollisionStrategy collisionStrategy = new SpecialCollisionStrategy(this, gameObjects(), gameObjectFactory,
-                windowDimensions, BALL_RADIUS,
-                new Vector2(PADDLE_WIDTH, PADDLE_HEIGHT), lifeCounter);
+        CollisionStrategy collisionStrategy = new SpecialCollisionStrategy(this, gameObjects(),
+                gameObjectFactory, windowDimensions, BALL_RADIUS, new Vector2(PADDLE_WIDTH, PADDLE_HEIGHT),
+                lifeCounter, (ObjectTracker)objectTracker, allBehaviors);
 
         int distFromWall = (WALL_WIDTH * 2) + 1;
         int allBufferSize = (bricksPerRow - 1) * BUFFER;
@@ -152,7 +175,6 @@ public class BrickerGameManager extends GameManager {
         for (int i = 1; i <= rowsOfBricks; i++) {
             listOfBricks[i - 1] = createBrickRow(brickWidth, i, brickImage, collisionStrategy);
         }
-        return listOfBricks;
     }
 
     private GameObject[] createBrickRow(float brickWidth, int rowIndex, Renderable brickImage,
@@ -163,9 +185,8 @@ public class BrickerGameManager extends GameManager {
 
             Vector2 topLeft = new Vector2((i * (BUFFER + brickWidth)) + WALL_WIDTH,
                     rowIndex * (BRICK_HEIGHT + BUFFER) + WALL_WIDTH);
-            GameObject brick = gameObjectFactory.createBrick(topLeft, brickDimension, brickImage, strategy,
+            row[i] = gameObjectFactory.createBrick(topLeft, brickDimension, brickImage, strategy,
                     brickCounter);
-            row[i] = brick;
         }
         return row;
     }
@@ -201,14 +222,12 @@ public class BrickerGameManager extends GameManager {
         return ball.getCenter().y() > windowDimensions.y();
     }
 
-    private void resetBallAfterLoss(){
+    private void resetBallAfterLoss() {
         lives.decrement();
         this.lifeCounter.loseLife();
         checkEndGame();
-        gameObjects().removeGameObject(ball);
-        this.ball = gameObjectFactory.createBall(BALL_PATH, BALL_SOUND_PATH, BALL_RADIUS, screenCenter);
+        ball.setCenter(screenCenter);
         setBallVelocity(ball);
-        gameObjects().addGameObject(ball);
     }
 
     private void removeOutOfBoundsItems() {
@@ -233,6 +252,7 @@ public class BrickerGameManager extends GameManager {
         }
     }
 
+    //todo check the problem of pressing W and the counters not resetting
     private void checkWinCondition() {
         if (brickCounter.value() == 0 || inputListener.isKeyPressed('W')) {
             resetWindowDialog(WIN_PROMPT);
@@ -262,10 +282,6 @@ public class BrickerGameManager extends GameManager {
             game = new BrickerGameManager();
         }
         game.run();
-    }
-
-    public Counter getBrickCounter() {
-        return brickCounter;
     }
 }
 

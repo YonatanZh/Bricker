@@ -22,20 +22,17 @@ public class ExtraPuck implements SpecialBehaviors {
     private final GameObjectCollection gameObjects;
     private final GameObjectFactory gameObjectFactory;
     private final float puckRadius;
-    private final Vector2 position;
     private final Random rand;
 
-    public ExtraPuck(GameObjectCollection gameObjects, GameObjectFactory gameObjectFactory, int ballRadius,
-                     Vector2 position) {
+    public ExtraPuck(GameObjectCollection gameObjects, GameObjectFactory gameObjectFactory, int ballRadius) {
         this.gameObjects = gameObjects;
         this.gameObjectFactory = gameObjectFactory;
         this.puckRadius = ballRadius * REDUCTION_FACTOR;
-        this.position = position;
         rand = new Random();
     }
 
     //todo change the string literal
-    public void behave() {
+    public void behave(Vector2 position) {
 
         for (int i = 0; i < PUCK_AMOUNT; i++) {
             GameObject puck = gameObjectFactory.createBall(PUCK_PATH, SOUND_PATH,

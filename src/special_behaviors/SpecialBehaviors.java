@@ -1,6 +1,7 @@
 package special_behaviors;
 
 import danogl.GameObject;
+import danogl.util.Vector2;
 import gameobjects.GameObjectFactory;
 
 /**
@@ -10,5 +11,5 @@ public interface SpecialBehaviors {
     /**
      * This method is used to define the behavior of a special object.
      */
-    public void behave();
+    public void behave(Vector2 position);
 }

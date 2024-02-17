@@ -4,29 +4,24 @@ import danogl.GameManager;
 import danogl.GameObject;
 import danogl.gui.rendering.Camera;
 import danogl.util.Vector2;
-import gameobjects.Ball;
-import gameobjects.ObjectTrackerCamera;
+import gameobjects.ObjectTracker;
 
 
 //todo change this class to two separate classes one for the behavior and one for the camera
 public class CameraChange implements SpecialBehaviors {
     private static final int MAX_COLLISIONS = 4;
-    private Camera camera;
-    private GameManager owner;
-    GameObject objToFollow;
+    private final ObjectTracker tracker;
+    private final GameManager owner;
 
-    public CameraChange(GameObject objToFollow, Vector2 deltaRelativeToObject, Vector2 dimensions,
-                        Vector2 windowDimensions, GameManager owner) {
+
+    public CameraChange(GameManager owner, ObjectTracker tracker) {
         this.owner = owner;
-        this.objToFollow = objToFollow;
-        this.camera = new ObjectTrackerCamera(objToFollow, deltaRelativeToObject, dimensions,
-                windowDimensions, owner, MAX_COLLISIONS);
+        this.tracker = tracker;
     }
 
 
     public void behave() {
-        if (owner.camera() == null) {
-            owner.setCamera(camera);
-        }
+        owner.setCamera(tracker);
+        tracker.trackCollision(MAX_COLLISIONS);
     }
 }

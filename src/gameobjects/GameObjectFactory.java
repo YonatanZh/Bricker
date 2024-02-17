@@ -71,6 +71,7 @@ public class GameObjectFactory {
                                                GameObjectCollection gameObjects, Counter paddleCounter) {
         Renderable paddleImage = imageReader.readImage(paddleImagePath, true);
         CollisionStrategy basicCollisionStrategy = new BasicCollisionStrategy(gameObjects);
+//        Counter paddleCounter = new Counter(0);
         GameObject paddle = new DisappearingPaddle(position, paddleSize, paddleImage, inputListener,
                 basicCollisionStrategy, paddleCounter);
         paddle.setCenter(position);
@@ -109,4 +110,8 @@ public class GameObjectFactory {
                 lifeCounter);
     }
 
+    public  GameObject createObjectTracker(GameObject objToFollow, Vector2 deltaRelativeToObject, Vector2 dimensions,
+                                          Vector2 windowDimensions, GameManager owner, GameObject object) {
+        return new ObjectTracker(objToFollow, deltaRelativeToObject, dimensions, windowDimensions, owner, object);
+    }
 }

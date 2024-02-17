@@ -8,8 +8,10 @@ import danogl.util.Counter;
 import danogl.util.Vector2;
 import gameobjects.Ball;
 import gameobjects.LifeCounter;
+import gameobjects.ObjectTracker;
 import special_behaviors.BehaviorFactory;
 import gameobjects.GameObjectFactory;
+import special_behaviors.SpecialBehaviors;
 
 import java.util.Random;
 
@@ -17,33 +19,33 @@ public class SpecialCollisionStrategy extends BasicCollisionStrategy implements 
 
     //todo chagnge theis to the actual number of special behaviors
     private static final int RANDOM_FACTOR = 1;
-    private final Random rand;
-    private final BehaviorFactory behaviorFactory;
+    private static final Random rand = new Random();
     private final LifeCounter lifeCounter;
-    private GameManager owner;
-    private GameObjectFactory gameObjectFactory;
-    private Vector2 windowDimensions;
-    private int ballRadius;
-    private int ballSpeed;
-    private Vector2 paddleSize;
-    private Counter paddleCounter;
-    private Ball ball;
+    private final SpecialBehaviors[] allBehaviors;
+    private final GameManager owner;
+    private final GameObjectFactory gameObjectFactory;
+    private final Vector2 windowDimensions;
+    private final int ballRadius;
+    private final Vector2 paddleSize;
+    private final ObjectTracker tracker;
+    private final Counter paddleCounter;
+
 
     public SpecialCollisionStrategy(GameManager owner, GameObjectCollection gameObjects,
                                     GameObjectFactory gameObjectFactory,
                                     Vector2 windowDimensions, int ballRadius,
-                                    Vector2 paddleSize, LifeCounter lifeCounter) {
+                                    Vector2 paddleSize, LifeCounter lifeCounter, ObjectTracker tracker,
+                                    SpecialBehaviors[] allBehaviors) {
         super(gameObjects);
         this.owner = owner;
         this.gameObjectFactory = gameObjectFactory;
         this.windowDimensions = windowDimensions;
         this.ballRadius = ballRadius;
         this.paddleSize = paddleSize;
-        this.rand = new Random();
+        this.tracker = tracker;
         this.lifeCounter = lifeCounter;
-        this.behaviorFactory = new BehaviorFactory(owner, gameObjects, gameObjectFactory, windowDimensions, lifeCounter);
+        this.allBehaviors = allBehaviors;
         this.paddleCounter = new Counter(0);
-        this.ball = getBall();
     }
 
     @Override
@@ -53,31 +55,25 @@ public class SpecialCollisionStrategy extends BasicCollisionStrategy implements 
         int behavior = rand.nextInt() % RANDOM_FACTOR;
 
         switch (behavior) {
-            case 0:
-                behaviorFactory.createExtraPuck(ballRadius, thisObj.getCenter()).behave();
+            case 2: // extra puck
+                allBehaviors[behavior].behave(thisObj.getCenter());
                 break;
-            case 1:
+            case 1: // todo fix this
                 if (paddleCounter.value() == 0) {
-                    behaviorFactory.createExtraPaddle(paddleSize, paddleCounter).behave();
+                    behaviorFactory.createExtraPaddle(paddleSize, paddleCounter).behave(windowDimensions);
                 }
                 break;
-            case 2:
-                behaviorFactory.createCameraChange(ball, owner).behave();
+            case 0:
+                behaviorFactory.createCameraChange(owner, tracker).behave();
                 break;
             case 3:
                 behaviorFactory.createExtraLife(thisObj.getCenter(), new Vector2(20, 20), windowDimensions, gameObjects, gameObjectFactory, lifeCounter).behave();
                 break;
+            case 4:
+                behaviorFactory.createDouble();
+                break;
             default:
                 break;
         }
-    }
-
-    private Ball getBall() {
-        for (GameObject obj : gameObjects.objectsInLayer(Layer.DEFAULT)) {
-            if (obj instanceof Ball) {
-                return (Ball) obj;
-            }
-        }
-        return null;
     }
 }

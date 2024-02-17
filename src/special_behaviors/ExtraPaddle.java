@@ -25,8 +25,8 @@ public class ExtraPaddle implements SpecialBehaviors {
         this.paddleCounter = paddleCounter;
     }
 
-    public void behave() {
-        Vector2 position = new Vector2(windowDimensions.x() / 2, windowDimensions.y() / 2);
+    public void behave(Vector2 position) {
+        position = new Vector2(windowDimensions.x() / 2, windowDimensions.y() / 2);
         GameObject paddle = gameObjectFactory.createDisappearingPaddle(PADDLE_PATH, size, position,
                 gameObjects, paddleCounter);
         gameObjects.addGameObject(paddle);
