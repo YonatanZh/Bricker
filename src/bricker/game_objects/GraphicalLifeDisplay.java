@@ -7,6 +7,9 @@ import danogl.gui.rendering.Renderable;
 import danogl.util.Counter;
 import danogl.util.Vector2;
 
+/**
+ * A class representing a graphical life display.
+ */
 public class
 GraphicalLifeDisplay extends GameObject {
     private final GameObjectCollection gameObjects;
@@ -16,8 +19,16 @@ GraphicalLifeDisplay extends GameObject {
     private final float indent;
     private Vector2 positionForNewLife;
 
-    // todo: made so we get a renderable. thought it was better practice - maybe change it in numerical too?
-    // todo: it maybe also ok that graphic is images and numerical is text.
+    /**
+     * Creates a new GraphicalLifeDisplay object.
+     * @param topLeftCorner the position of the top left corner of the life display
+     * @param dimensions the dimensions of the life display
+     * @param indent the indent between the lives
+     * @param lives the life counter
+     * @param maxLives the maximum number of lives
+     * @param gameObjects a collection of all the game objects
+     * @param renderable that presents an image of the life
+     */
     public GraphicalLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions,
                                 float indent, Counter lives, int maxLives,
                                 GameObjectCollection gameObjects, Renderable renderable) {
@@ -30,17 +41,23 @@ GraphicalLifeDisplay extends GameObject {
         positionForNewLife = topLeftCorner;
         for (int i = 0; i < lives.value(); i++) {
             gainLife(dimensions, i);
-
-
             this.positionForNewLife = topLeftCorner.add(new Vector2(this.indent * (i+1), 0));
         }
     }
 
+    /**
+     * Removes a graphical life from the display.
+     */
     public void loseLife() {
         gameObjects.removeGameObject(allGraphicalLives[lives.value()], Layer.UI);
         this.positionForNewLife = positionForNewLife.subtract(new Vector2(this.indent, 0));
     }
 
+    /**
+     * Adds a graphical life to the display.
+     * @param objectSize the size of the life
+     * @param index the index of the life in the array
+     */
     public void gainLife(Vector2 objectSize, int index) {
         allGraphicalLives[index] = new GameObject(positionForNewLife, objectSize, renderable);
         allGraphicalLives[index].setCenter(positionForNewLife);

@@ -1,7 +1,8 @@
-package bricker.game_objects;
+package gameobjects;
 
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
+import danogl.collisions.Layer;
 import danogl.gui.ImageReader;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Counter;
@@ -19,8 +20,6 @@ public class LifeCounter extends GameObject {
     private final Counter lives;
     private final Vector2 lifeDimensions;
     Renderable lifeImage;
-
-
 
     public LifeCounter(Vector2 topLeftCorner, Vector2 dimensions, ImageReader imageReader, Counter lives, float objectSize,
                        int buffer, GameObjectCollection gameObjects, GameObjectFactory gameObjectFactory) {

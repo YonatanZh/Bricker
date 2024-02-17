@@ -1,4 +1,4 @@
-package bricker.game_objects;
+package gameobjects;
 
 import danogl.GameObject;
 import danogl.collisions.Collision;
@@ -10,6 +10,7 @@ import danogl.util.Vector2;
  * A class representing the ball in the game.
  */
 public class Ball extends GameObject {
+
     private int collisionCounter;
     private Sound collisionSound;
 

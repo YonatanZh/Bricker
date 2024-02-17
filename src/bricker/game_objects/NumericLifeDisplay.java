@@ -1,4 +1,4 @@
-package bricker.game_objects;
+package gameobjects;
 
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;

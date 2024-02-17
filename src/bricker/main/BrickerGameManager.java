@@ -1,4 +1,4 @@
-package bricker.main;
+package main;
 
 import bricker.brick_strategies.CollisionStrategy;
 import bricker.brick_strategies.SpecialCollisionStrategy;
@@ -13,8 +13,9 @@ import danogl.gui.*;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Counter;
 import danogl.util.Vector2;
-import bricker.special_behaviors.BehaviorFactory;
-import bricker.special_behaviors.SpecialBehaviors;
+import gameobjects.GameObjectFactory;
+import gameobjects.LifeCounter;
+import gameobjects.Paddle;
 import java.util.Random;
 
 import static bricker.main.Constants.*;
@@ -82,6 +83,7 @@ public class BrickerGameManager extends GameManager {
         // initialization
         super.initializeGame(imageReader, soundReader, inputListener, windowController);
         this.imageReader = imageReader;
+        this.soundReader = soundReader;
         this.inputListener = inputListener;
         this.windowController = windowController;
         this.brickCounter = new Counter(this.bricksPerRow * this.rowsOfBricks);
