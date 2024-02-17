@@ -10,12 +10,17 @@ import gameobjects.Ball;
 import gameobjects.LifeCounter;
 import special_behaviors.BehaviorFactory;
 import gameobjects.GameObjectFactory;
+import special_behaviors.Behaviors;
 
 import java.util.Random;
 
+/**
+ * This class is a collision strategy that adds special behaviors to the game when a collision occurs.
+ */
 public class SpecialCollisionStrategy extends BasicCollisionStrategy implements CollisionStrategy {
 
     //todo chagnge theis to the actual number of special behaviors
+    //todo maybe use enum?
     private static final int RANDOM_FACTOR = 5;
     private final Random rand;
     private final BehaviorFactory behaviorFactory;
@@ -29,6 +34,18 @@ public class SpecialCollisionStrategy extends BasicCollisionStrategy implements 
     private Counter paddleCounter;
     private Ball ball;
 
+    /**
+     * Constructor for the SpecialCollisionStrategy class.
+     *
+     * @param owner             the game manager
+     * @param gameObjects       the game objects
+     * @param gameObjectFactory the game object factory
+     * @param windowDimensions  the window dimensions
+     * @param ballRadius        the ball radius
+     * @param ballSpeed         the ball speed
+     * @param paddleSize        the paddle size
+     * @param lifeCounter       the life counter
+     */
     public SpecialCollisionStrategy(GameManager owner, GameObjectCollection gameObjects,
                                     GameObjectFactory gameObjectFactory,
                                     Vector2 windowDimensions, int ballRadius, int ballSpeed,
@@ -47,6 +64,12 @@ public class SpecialCollisionStrategy extends BasicCollisionStrategy implements 
         this.ball = getBall();
     }
 
+    /**
+     * A method that is called when an object collides with the special object.
+     *
+     * @param thisObj  the object that has this strategy
+     * @param otherObj other object that this object collided with
+     */
     @Override
     public void onCollision(GameObject thisObj, GameObject otherObj) {
         super.onCollision(thisObj, otherObj);
@@ -55,17 +78,21 @@ public class SpecialCollisionStrategy extends BasicCollisionStrategy implements 
 
         switch (behavior) {
             case 0:
+                // adds two extra pucks (small balls) to the game
                 behaviorFactory.createExtraPuck(ballRadius, ballSpeed, thisObj.getCenter()).behave();
                 break;
             case 1:
+                // adds an extra paddle to the game
                 if (paddleCounter.value() == 0) {
                     behaviorFactory.createExtraPaddle(paddleSize, paddleCounter).behave();
                 }
                 break;
             case 2:
+                // changes the camera to follow the ball
                 behaviorFactory.createCameraChange(ball, owner).behave();
                 break;
             case 3:
+                // adds an extra life to the game that the player can collect with the paddle
                 behaviorFactory.createExtraLife(thisObj.getCenter(), new Vector2(20, 20), windowDimensions, gameObjects, gameObjectFactory, lifeCounter).behave();
                 break;
             default:
@@ -73,6 +100,11 @@ public class SpecialCollisionStrategy extends BasicCollisionStrategy implements 
         }
     }
 
+    /**
+     * A method that returns the ball object.
+     *
+     * @return the ball object
+     */
     private Ball getBall() {
         for (GameObject obj : gameObjects.objectsInLayer(Layer.DEFAULT)) {
             if (obj instanceof Ball) {

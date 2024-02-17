@@ -13,6 +13,9 @@ import gameobjects.Paddle;
 
 import java.util.Random;
 
+/**
+ * A class representing the game manager for the Bricker game.
+ */
 public class BrickerGameManager extends GameManager {
 
     // screen dimensions
@@ -66,6 +69,9 @@ public class BrickerGameManager extends GameManager {
     private Vector2 screenCenter;
 
 
+    /**
+     * Creates a new BrickerGameManager object.
+     */
     public BrickerGameManager() {
         super(TITLE, new Vector2(WIDTH, HEIGHT));
         this.windowDimensions = new Vector2(WIDTH, HEIGHT);
@@ -74,6 +80,13 @@ public class BrickerGameManager extends GameManager {
         this.lives = new Counter(DEFAULT_LIVES);
     }
 
+    /**
+     * Creates a new BrickerGameManager object.
+     *
+     * @param windowDimensions the dimensions of the window
+     * @param bricksPerRow     the number of bricks per row
+     * @param rowsOfBricks     the number of rows of bricks
+     */
     public BrickerGameManager(Vector2 windowDimensions, int bricksPerRow, int rowsOfBricks) {
         super(TITLE, windowDimensions);
         this.windowDimensions = windowDimensions;
@@ -82,6 +95,14 @@ public class BrickerGameManager extends GameManager {
         this.lives = new Counter(DEFAULT_LIVES);
     }
 
+    /**
+     * Initializes the game.
+     *
+     * @param imageReader       the image reader
+     * @param soundReader       the sound reader
+     * @param inputListener     the input listener
+     * @param windowController  the window controller
+     */
     @Override
     public void initializeGame(ImageReader imageReader, SoundReader soundReader,
                                UserInputListener inputListener, WindowController windowController) {
@@ -127,6 +148,11 @@ public class BrickerGameManager extends GameManager {
 
     }
 
+    /**
+     * Updates the game.
+     *
+     * @param deltaTime the time passed since the last update
+     */
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
@@ -138,6 +164,9 @@ public class BrickerGameManager extends GameManager {
         removeOutOfBoundsItems();
     }
 
+    /**
+     * A method that sets the velocity of the ball.
+     */
     private void setBallVelocity(GameObject ball) {
         float velocityX = BALL_SPEED;
         float velocityY = BALL_SPEED;
@@ -151,12 +180,22 @@ public class BrickerGameManager extends GameManager {
         ball.setVelocity(new Vector2(velocityX, velocityY));
     }
 
+    /**
+     * A method that adds the walls to the game.
+     *
+     * @param walls the walls to add
+     */
     private void addWalls(GameObject[] walls) {
         for (GameObject wall : walls) {
             gameObjects().addGameObject(wall);
         }
     }
 
+    /**
+     * A method that adds the bricks to the game.
+     *
+     * @param bricks the bricks to add
+     */
     private void addBricks(GameObject[][] bricks) {
         for (GameObject[] brick : bricks) {
             for (GameObject gameObject : brick) {
@@ -165,10 +204,18 @@ public class BrickerGameManager extends GameManager {
         }
     }
 
+    /**
+     * A method that checks if the ball is out of bounds.
+     *
+     * @return true if the ball is out of bounds, false otherwise
+     */
     private boolean isBallOutOfBounds() {
         return ball.getCenter().y() > windowDimensions.y();
     }
 
+    /**
+     * A method that resets the ball after a loss.
+     */
     private void resetBallAfterLoss(){
         lives.decrement();
         this.lifeCounter.loseLife();
@@ -179,6 +226,9 @@ public class BrickerGameManager extends GameManager {
         gameObjects().addGameObject(ball);
     }
 
+    /**
+     * A method that removes out of bounds items from the game.
+     */
     private void removeOutOfBoundsItems() {
         for (GameObject obj : gameObjects().objectsInLayer(Layer.DEFAULT)) {
             if (obj.getCenter().y() > windowDimensions.y()) {
@@ -187,6 +237,11 @@ public class BrickerGameManager extends GameManager {
         }
     }
 
+    /**
+     * A method that resets the window dialog.
+     *
+     * @param prompt the prompt to display
+     */
     private void resetWindowDialog(String prompt) {
         if (windowController.openYesNoDialog(prompt)) {
             this.windowController.resetGame();
@@ -195,18 +250,27 @@ public class BrickerGameManager extends GameManager {
         }
     }
 
+    /**
+     * A method that checks if the game has ended.
+     */
     private void checkEndGame() {
         if (lives.value() == 0) {
             resetWindowDialog(LOSE_PROMPT);
         }
     }
 
+    /**
+     * A method that checks if the win condition has been met.
+     */
     private void checkWinCondition() {
         if (brickCounter.value() == 0 || inputListener.isKeyPressed('W')) {
             resetWindowDialog(WIN_PROMPT);
         }
     }
 
+    /**
+     * A method that checks if the paddle has collided with the wall.
+     */
     private void checkPaddleWallCollision() {
         for (GameObject obj : gameObjects().objectsInLayer(Layer.DEFAULT)) {
             if (obj instanceof Paddle) {
@@ -218,7 +282,11 @@ public class BrickerGameManager extends GameManager {
         }
     }
 
-
+    /**
+     * The main method.
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         BrickerGameManager game;
         Vector2 screen = new Vector2(WIDTH, HEIGHT);
@@ -230,10 +298,6 @@ public class BrickerGameManager extends GameManager {
             game = new BrickerGameManager();
         }
         game.run();
-    }
-
-    public Counter getBrickCounter() {
-        return brickCounter;
     }
 }
 

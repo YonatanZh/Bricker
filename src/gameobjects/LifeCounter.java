@@ -8,6 +8,9 @@ import danogl.gui.rendering.Renderable;
 import danogl.util.Counter;
 import danogl.util.Vector2;
 
+/**
+ * A class representing a life counter in the game.
+ */
 public class LifeCounter extends GameObject {
     private static final int MAX_LIVES = 4; //todo what is this???
 
@@ -18,8 +21,17 @@ public class LifeCounter extends GameObject {
     private final Vector2 lifeDimensions;
     Renderable lifeImage;
 
-
-
+    /**
+     * Creates a new LifeCounter object.
+     * @param topLeftCorner the position of the top left corner of the life counter
+     * @param dimensions the dimensions of the life counter
+     * @param imageReader the image reader
+     * @param lives the life counter
+     * @param objectSize the size of the life
+     * @param buffer the buffer between the lives
+     * @param gameObjects a collection of all the game objects
+     * @param gameObjectFactory the game object factory
+     */
     public LifeCounter(Vector2 topLeftCorner, Vector2 dimensions, ImageReader imageReader, Counter lives, float objectSize,
                        int buffer, GameObjectCollection gameObjects, GameObjectFactory gameObjectFactory) {
         super(topLeftCorner, dimensions, null);
@@ -34,6 +46,10 @@ public class LifeCounter extends GameObject {
                 lifeDimensions, lifeImage, objectSize + buffer, this.lives, MAX_LIVES, gameObjects);
     }
 
+    /**
+     * Updates the life counter.
+     * @param deltaTime the time passed since the last update
+     */
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
@@ -47,6 +63,15 @@ public class LifeCounter extends GameObject {
         }
     }
 
+    /**
+     * Creates a new life object.
+     * @param gameObjectFactory the game object factory
+     * @param topLeftCorner the position of the top left corner of the life
+     * @param dimensions the dimensions of the life
+     * @param velocity the velocity of the life
+     * @param windowDimensions the window dimensions
+     * @param gameObjects a collection of all the game objects
+     */
     public void createLife(GameObjectFactory gameObjectFactory, Vector2 topLeftCorner, Vector2 dimensions,
                            Vector2 velocity, Vector2 windowDimensions, GameObjectCollection gameObjects) {
         FallingLife life = (FallingLife) gameObjectFactory.createFallingLife(topLeftCorner, dimensions, lifeImage,
@@ -55,6 +80,10 @@ public class LifeCounter extends GameObject {
         life.setVelocity(velocity);
         gameObjects.addGameObject(life, danogl.collisions.Layer.DEFAULT);
     }
+
+    /**
+     * Removes a life from the game.
+     */
     public void loseLife() {
         graphicalLives.loseLife();
         numericLifeCounter.loseLife();

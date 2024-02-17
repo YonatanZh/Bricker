@@ -10,6 +10,9 @@ import main.BrickerGameManager;
 
 import java.util.Random;
 
+/**
+ * A class representing a special behavior that adds an extra puck to the game.
+ */
 public class ExtraPuck implements SpecialBehaviors {
 
     private static final String PUCK_PATH = "assets/mockBall.png";
@@ -25,6 +28,14 @@ public class ExtraPuck implements SpecialBehaviors {
     private final Vector2 position;
     private final Random rand;
 
+    /**
+     * Creates a new ExtraPuck object.
+     * @param gameObjects a collection of all the game objects
+     * @param gameObjectFactory the game object factory
+     * @param ballRadius the radius of the puck
+     * @param ballSpeed the speed of the puck
+     * @param position the position of the puck
+     */
     public ExtraPuck(GameObjectCollection gameObjects, GameObjectFactory gameObjectFactory, int ballRadius,
                      int ballSpeed, Vector2 position) {
         this.gameObjects = gameObjects;
@@ -36,6 +47,9 @@ public class ExtraPuck implements SpecialBehaviors {
     }
 
     //todo change the string literal
+    /**
+     * Adds an extra puck to the game.
+     */
     public void behave() {
 
         for (int i = 0; i < PUCK_AMOUNT; i++) {

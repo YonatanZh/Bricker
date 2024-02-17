@@ -6,6 +6,9 @@ import danogl.util.Counter;
 import danogl.util.Vector2;
 import gameobjects.GameObjectFactory;
 
+/**
+ * A class representing a special behavior that adds an extra paddle to the game.
+ */
 public class ExtraPaddle implements SpecialBehaviors {
 
     private static final String PADDLE_PATH = "assets/paddle.png";
@@ -16,6 +19,14 @@ public class ExtraPaddle implements SpecialBehaviors {
     private Vector2 windowDimensions;
     private Counter paddleCounter;
 
+    /**
+     * Creates a new ExtraPaddle object.
+     * @param gameObjects a collection of all the game objects
+     * @param gameObjectFactory the game object factory
+     * @param size the size of the paddle
+     * @param windowDimensions the window dimensions
+     * @param paddleCounter the paddle counter
+     */
     public ExtraPaddle(GameObjectCollection gameObjects, GameObjectFactory gameObjectFactory, Vector2 size,
                        Vector2 windowDimensions, Counter paddleCounter) {
         this.gameObjects = gameObjects;
@@ -25,6 +36,9 @@ public class ExtraPaddle implements SpecialBehaviors {
         this.paddleCounter = paddleCounter;
     }
 
+    /**
+     * Adds an extra paddle to the game.
+     */
     public void behave() {
         Vector2 position = new Vector2(windowDimensions.x() / 2, windowDimensions.y() / 2);
         GameObject paddle = gameObjectFactory.createDisappearingPaddle(PADDLE_PATH, size, position,

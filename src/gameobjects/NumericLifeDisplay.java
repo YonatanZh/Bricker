@@ -11,8 +11,7 @@ import java.awt.*;
 
 
 /**
- * A TextRenderable that represents a numeric life counter with a color that changes based
- * on the current life count.
+ * A class representing a numeric life display.
  */
 public class NumericLifeDisplay extends GameObject {
 
@@ -22,6 +21,13 @@ public class NumericLifeDisplay extends GameObject {
     private final Counter lives;
     private final TextRenderable lifeCounter;
 
+    /**
+     * Creates a new NumericLifeDisplay object.
+     * @param topLeftCorner the position of the top left corner of the life display
+     * @param dimensions the dimensions of the life display
+     * @param lives the life counter
+     * @param gameObjects a collection of all the game objects
+     */
     public NumericLifeDisplay(Vector2 topLeftCorner, Vector2 dimensions, Counter lives,
                               GameObjectCollection gameObjects) {
         super(topLeftCorner, dimensions, null);
@@ -33,12 +39,17 @@ public class NumericLifeDisplay extends GameObject {
         gameObjects.addGameObject(this, Layer.UI);
     }
 
+    /**
+     * represents the new life counter after a life is lost.
+     */
     public void loseLife() {
         this.lifeCounter.setString(Integer.toString(lives.value()));
         setColor();
     }
 
-
+    /**
+     * Sets the color of the life counter based on the number of lives.
+     */
     public void setColor() {
         if (lives.value() >= GREEN_THRESHOLD) {
             lifeCounter.setColor(Color.GREEN);
@@ -49,6 +60,9 @@ public class NumericLifeDisplay extends GameObject {
         }
     }
 
+    /**
+     * represents the new life counter after a life is gained.
+     */
     public void gainLife() {
         this.lifeCounter.setString(Integer.toString(lives.value()));
         setColor();
