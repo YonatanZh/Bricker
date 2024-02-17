@@ -1,4 +1,4 @@
-package gameobjects;
+package bricker.game_objects;
 
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
@@ -7,7 +7,6 @@ import danogl.util.Vector2;
 import danogl.collisions.Collision;
 
 public class FallingLife extends GameObject {
-
     private final GameObjectCollection gameObjects;
     private final Vector2 windowDimensions;
     private final LifeCounter lifeCounter;

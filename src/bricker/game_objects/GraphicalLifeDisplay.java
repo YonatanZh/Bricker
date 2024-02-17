@@ -1,4 +1,4 @@
-package gameobjects;
+package bricker.game_objects;
 
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
@@ -9,7 +9,6 @@ import danogl.util.Vector2;
 
 public class
 GraphicalLifeDisplay extends GameObject {
-
     private final GameObjectCollection gameObjects;
     private final Counter lives;
     private final GameObject[] allGraphicalLives;

@@ -1,7 +1,11 @@
-package main;
+package bricker.main;
 
-import brick_strategies.CollisionStrategy;
-import brick_strategies.SpecialCollisionStrategy;
+import bricker.brick_strategies.CollisionStrategy;
+import bricker.brick_strategies.SpecialCollisionStrategy;
+import bricker.game_objects.GameObjectFactory;
+import bricker.game_objects.LifeCounter;
+import bricker.game_objects.ObjectTracker;
+import bricker.game_objects.Paddle;
 import danogl.GameManager;
 import danogl.GameObject;
 import danogl.collisions.Layer;
@@ -9,55 +13,19 @@ import danogl.gui.*;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Counter;
 import danogl.util.Vector2;
-import gameobjects.*;
-import special_behaviors.BehaviorFactory;
-import special_behaviors.SpecialBehaviors;
-
+import bricker.special_behaviors.BehaviorFactory;
+import bricker.special_behaviors.SpecialBehaviors;
 import java.util.Random;
 
+import static bricker.main.Constants.*;
+
+/**
+ * This class is the main class for the Bricker game. It is responsible for initializing the game
+ * and updating the game state.
+ */
 public class BrickerGameManager extends GameManager {
-
-    // screen dimensions
-    private static final int WIDTH = 800;
-    private static final int HEIGHT = 600;
-    private static final int WALL_WIDTH = 5;
-    private static final int BUFFER = 5;
-    private static final int LIVES_INDENT_SIZE = 50;
-
-    // game Strings
-    private static final String TITLE = "Bricker";
-    private static final String LOSE_PROMPT = "You lose! Play again?";
-    private static final String WIN_PROMPT = "You win! Play again?";
-
-    // assets paths
-    private static final String BALL_PATH = "assets/ball.png";
-    private static final String BALL_SOUND_PATH = "assets/blop_cut_silenced.wav";
-    private static final String PADDLE_PATH = "assets/paddle.png";
-    private static final String BACKGROUND_PATH = "assets/DARK_BG2_small.jpeg";
-    private static final String BRICK_PATH = "assets/brick.png";
-
-    // ball and paddle dimensions
-    private static final int BALL_RADIUS = 20;
-    private static final int PADDLE_WIDTH = 100;
-    private static final int PADDLE_HEIGHT = 15;
-    private static final int BALL_SPEED = 200;
-    private static final int LIVES_SQUARE_SIZE = 20;
-
-    // brick dimensions
-    private static final int DEFAULT_ROW_OF_BRICKS = 7;
-    private static final int DEFAULT_BRICK_PER_ROW = 8;
-    private static final int BRICK_HEIGHT = 15;
-
-    // lives constants
-    private static final int DEFAULT_LIVES = 3;
-
-    // todo figure out if needs to be documented
-    public static final int MAX_BEHAVIORS_PER_BRICK = 3;
-    private static final int BEHAVIOR_AMOUNT = 5;
     private static final SpecialBehaviors[] allBehaviors = new SpecialBehaviors[BEHAVIOR_AMOUNT];
-
     private ImageReader imageReader;
-    private SoundReader soundReader;
     private UserInputListener inputListener;
     private WindowController windowController;
     private final Vector2 windowDimensions;
@@ -73,35 +41,53 @@ public class BrickerGameManager extends GameManager {
     private GameObject objectTracker;
 
 
+    /**
+     * Constructor for the BrickerGameManager class. It initializes the game with default values.
+     */
     public BrickerGameManager() {
-        super(TITLE, new Vector2(WIDTH, HEIGHT));
-        this.windowDimensions = new Vector2(WIDTH, HEIGHT);
+        super(GAME_TITLE, new Vector2(SCREEN_WIDTH, SCREEN_HEIGHT));
+        this.windowDimensions = new Vector2(SCREEN_WIDTH, SCREEN_HEIGHT);
         this.bricksPerRow = DEFAULT_BRICK_PER_ROW;
         this.rowsOfBricks = DEFAULT_ROW_OF_BRICKS;
         this.lives = new Counter(DEFAULT_LIVES);
     }
 
+    /**
+     * Constructor for the BrickerGameManager class. It initializes the game with the given values.
+     *
+     * @param windowDimensions the dimensions of the game window
+     * @param bricksPerRow     the number of bricks per row
+     * @param rowsOfBricks     the number of rows of bricks
+     */
     public BrickerGameManager(Vector2 windowDimensions, int bricksPerRow, int rowsOfBricks) {
-        super(TITLE, windowDimensions);
+        super(GAME_TITLE, windowDimensions);
         this.windowDimensions = windowDimensions;
         this.rowsOfBricks = rowsOfBricks;
         this.bricksPerRow = bricksPerRow;
         this.lives = new Counter(DEFAULT_LIVES);
     }
 
+    /**
+     * Initializes the game with the given image reader, sound reader, input listener, and window
+     * controller.
+     *
+     * @param imageReader       the image reader
+     * @param soundReader       the sound reader
+     * @param inputListener     the input listener
+     * @param windowController  the window controller
+     */
     @Override
     public void initializeGame(ImageReader imageReader, SoundReader soundReader,
                                UserInputListener inputListener, WindowController windowController) {
         // initialization
         super.initializeGame(imageReader, soundReader, inputListener, windowController);
         this.imageReader = imageReader;
-        this.soundReader = soundReader;
         this.inputListener = inputListener;
         this.windowController = windowController;
         this.brickCounter = new Counter(this.bricksPerRow * this.rowsOfBricks);
         this.screenCenter = windowDimensions.mult(0.5f);
 
-        this.gameObjectFactory = new GameObjectFactory(this, imageReader, soundReader, inputListener,
+        this.gameObjectFactory = new GameObjectFactory(imageReader, soundReader, inputListener,
                 windowDimensions);
 
 
@@ -129,22 +115,26 @@ public class BrickerGameManager extends GameManager {
         //todo refactor this. this creation of life counter breaks encapsulation. none of the objects
         // should add themselves to the game.    once done need to handle the case of new game with more or
         // less lives than default
-        Vector2 livesTopLeftCorner = new Vector2(LIVES_INDENT_SIZE, windowDimensions.y() - LIVES_SQUARE_SIZE);
-        Vector2 livesDimensions = new Vector2((LIVES_SQUARE_SIZE + BUFFER) * DEFAULT_LIVES,
-                LIVES_SQUARE_SIZE);
+        Vector2 livesTopLeftCorner = new Vector2(LIVES_INDENT_SIZE, windowDimensions.y() - DROPPING_LIFE_SIZE);
+        Vector2 livesDimensions = new Vector2((DROPPING_LIFE_SIZE + BUFFER) * DEFAULT_LIVES,
+                DROPPING_LIFE_SIZE);
 
         this.lifeCounter = (LifeCounter) gameObjectFactory.createLifeCounter(livesTopLeftCorner,
                 livesDimensions,
-                imageReader, lives, LIVES_SQUARE_SIZE, BUFFER, gameObjects());
+                imageReader, lives, DROPPING_LIFE_SIZE, BUFFER, gameObjects());
 
         createBehaviors();
 
         GameObject[][] bricks = new GameObject[rowsOfBricks][bricksPerRow];
         createBricks(bricks);
         addBricks(bricks);
-
     }
 
+    /**
+     * Updates the game state. It checks for collisions, updates the game objects, and checks for win.
+     *
+     * @param deltaTime unused.
+     */
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
@@ -158,16 +148,21 @@ public class BrickerGameManager extends GameManager {
 
     private void createBehaviors(){
         BehaviorFactory behaviorFactory = new BehaviorFactory(gameObjects(), gameObjectFactory,
-                windowDimensions, lifeCounter);
+                windowDimensions);
         allBehaviors[0] = behaviorFactory.createExtraPuck(BALL_RADIUS);
         allBehaviors[1] = behaviorFactory.createExtraPaddle(new Vector2(PADDLE_WIDTH, PADDLE_HEIGHT));
+        allBehaviors[2] = behaviorFactory.createCameraChange(this, (ObjectTracker)objectTracker);
+        Vector2 lifeSize = new Vector2(DROPPING_LIFE_SIZE, DROPPING_LIFE_SIZE);
+        allBehaviors[3] = behaviorFactory.createExtraLife(lifeSize, windowDimensions, gameObjects(),
+                gameObjectFactory, lifeCounter);
+        allBehaviors[4] = behaviorFactory.createDouble(new SpecialBehaviors[] {allBehaviors[0],
+                allBehaviors[1], allBehaviors[2], allBehaviors[3]} );
     }
 
     private void createBricks(GameObject[][] listOfBricks) {
         Renderable brickImage = imageReader.readImage(BRICK_PATH, false);
-        CollisionStrategy collisionStrategy = new SpecialCollisionStrategy(this, gameObjects(),
-                gameObjectFactory, windowDimensions, BALL_RADIUS, new Vector2(PADDLE_WIDTH, PADDLE_HEIGHT),
-                lifeCounter, (ObjectTracker)objectTracker, allBehaviors);
+        CollisionStrategy collisionStrategy = new SpecialCollisionStrategy(gameObjects(), windowDimensions,
+                allBehaviors);
 
         int distFromWall = (WALL_WIDTH * 2) + 1;
         int allBufferSize = (bricksPerRow - 1) * BUFFER;
@@ -271,9 +266,14 @@ public class BrickerGameManager extends GameManager {
     }
 
 
+    /**
+     * Main method for the Bricker game. It creates a BrickerGameManager and runs the game.
+     *
+     * @param args unused.
+     */
     public static void main(String[] args) {
         BrickerGameManager game;
-        Vector2 screen = new Vector2(WIDTH, HEIGHT);
+        Vector2 screen = new Vector2(SCREEN_WIDTH, SCREEN_HEIGHT);
 
         if (args.length == 2) {
             game = new BrickerGameManager(screen, Integer.parseInt(args[0]),

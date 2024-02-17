@@ -1,18 +1,19 @@
-package gameobjects;
+package bricker.game_objects;
 
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
-import danogl.collisions.Layer;
 import danogl.gui.ImageReader;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Counter;
 import danogl.util.Vector2;
 
+import static bricker.main.Constants.LIFE_HEART_PATH;
+
 public class LifeCounter extends GameObject {
     private static final int MAX_LIVES = 4; //todo what is this???
-    // todo: this was supposed to be the max life for the player for when add lives back
+    // todo: this was supposed to be the max life for the player for when add lives back. add this to the
+    //  constants file
 
-    private static final String LIFE_HEART_PATH = "assets/heart.png";
     private final NumericLifeDisplay numericLifeCounter;
     private final GraphicalLifeDisplay graphicalLives;
     private final Counter lives;

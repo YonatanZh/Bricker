@@ -1,4 +1,4 @@
-package gameobjects;
+package bricker.game_objects;
 
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
@@ -6,8 +6,10 @@ import danogl.collisions.Layer;
 import danogl.gui.rendering.TextRenderable;
 import danogl.util.Counter;
 import danogl.util.Vector2;
-
 import java.awt.*;
+
+import static bricker.main.Constants.GREEN_THRESHOLD;
+import static bricker.main.Constants.YELLOW_THRESHOLD;
 
 
 /**
@@ -15,10 +17,6 @@ import java.awt.*;
  * on the current life count.
  */
 public class NumericLifeDisplay extends GameObject {
-
-    private static final int GREEN_THRESHOLD = 3;
-    private static final int YELLOW_THRESHOLD = 2;
-
     private final Counter lives;
     private final TextRenderable lifeCounter;
 
@@ -37,7 +35,6 @@ public class NumericLifeDisplay extends GameObject {
         this.lifeCounter.setString(Integer.toString(lives.value()));
         setColor();
     }
-
 
     public void setColor() {
         if (lives.value() >= GREEN_THRESHOLD) {
