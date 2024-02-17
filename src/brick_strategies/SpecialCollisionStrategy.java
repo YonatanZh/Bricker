@@ -74,28 +74,30 @@ public class SpecialCollisionStrategy extends BasicCollisionStrategy implements 
     public void onCollision(GameObject thisObj, GameObject otherObj) {
         super.onCollision(thisObj, otherObj);
 
-        int behavior = rand.nextInt() % RANDOM_FACTOR;
+        int behaviorAmount = Behaviors.values().length;
+        int behaviorIndex = Math.min(rand.nextInt() % RANDOM_FACTOR, behaviorAmount);
+        Behaviors behavior = Behaviors.values()[behaviorIndex];
 
         switch (behavior) {
-            case 0:
+            case Behaviors.EXTRA_PUCK:
                 // adds two extra pucks (small balls) to the game
                 behaviorFactory.createExtraPuck(ballRadius, ballSpeed, thisObj.getCenter()).behave();
                 break;
-            case 1:
+            case Behaviors.EXTRA_PADDLE:
                 // adds an extra paddle to the game
                 if (paddleCounter.value() == 0) {
                     behaviorFactory.createExtraPaddle(paddleSize, paddleCounter).behave();
                 }
                 break;
-            case 2:
+            case Behaviors.CAMERA_CHANGE:
                 // changes the camera to follow the ball
                 behaviorFactory.createCameraChange(ball, owner).behave();
                 break;
-            case 3:
+            case Behaviors.EXTRA_LIFE:
                 // adds an extra life to the game that the player can collect with the paddle
                 behaviorFactory.createExtraLife(thisObj.getCenter(), new Vector2(20, 20), windowDimensions, gameObjects, gameObjectFactory, lifeCounter).behave();
                 break;
-            default:
+            case Behaviors.NONE:
                 break;
         }
     }

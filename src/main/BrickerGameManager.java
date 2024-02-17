@@ -283,9 +283,7 @@ public class BrickerGameManager extends GameManager {
     }
 
     /**
-     * The main method.
-     *
-     * @param args the command line arguments
+     * A method that runs the game.
      */
     public static void main(String[] args) {
         BrickerGameManager game;
