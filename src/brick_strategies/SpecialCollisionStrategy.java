@@ -16,7 +16,7 @@ import java.util.Random;
 public class SpecialCollisionStrategy extends BasicCollisionStrategy implements CollisionStrategy {
 
     //todo chagnge theis to the actual number of special behaviors
-    private static final int RANDOM_FACTOR = 1;
+    private static final int RANDOM_FACTOR = 5;
     private final Random rand;
     private final BehaviorFactory behaviorFactory;
     private final LifeCounter lifeCounter;
@@ -54,7 +54,7 @@ public class SpecialCollisionStrategy extends BasicCollisionStrategy implements 
         int behavior = rand.nextInt() % RANDOM_FACTOR;
 
         switch (behavior) {
-            case 3:
+            case 0:
                 behaviorFactory.createExtraPuck(ballRadius, ballSpeed, thisObj.getCenter()).behave();
                 break;
             case 1:
@@ -65,7 +65,7 @@ public class SpecialCollisionStrategy extends BasicCollisionStrategy implements 
             case 2:
                 behaviorFactory.createCameraChange(ball, owner).behave();
                 break;
-            case 0:
+            case 3:
                 behaviorFactory.createExtraLife(thisObj.getCenter(), new Vector2(20, 20), windowDimensions, gameObjects, gameObjectFactory, lifeCounter).behave();
                 break;
             default:
