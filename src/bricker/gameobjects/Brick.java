@@ -1,4 +1,4 @@
-package bricker.game_objects;
+package bricker.gameobjects;
 
 import bricker.brick_strategies.CollisionStrategy;
 import danogl.GameObject;
@@ -32,7 +32,8 @@ public class Brick extends GameObject {
     }
 
     /**
-     * Called when the brick collides with another object. Calls the collision strategy and decrements the brick counter.
+     * Called when the brick collides with another object.
+     * Calls the collision strategy and decrements the brick counter.
      *
      * @param other     the object the brick collided with.
      * @param collision the collision parameters.

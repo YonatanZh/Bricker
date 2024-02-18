@@ -1,4 +1,4 @@
-package bricker.game_objects;
+package bricker.gameobjects;
 
 import bricker.brick_strategies.BasicCollisionStrategy;
 import bricker.brick_strategies.CollisionStrategy;

@@ -4,7 +4,7 @@ import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
 import danogl.util.Counter;
 import danogl.util.Vector2;
-import bricker.game_objects.GameObjectFactory;
+import bricker.gameobjects.GameObjectFactory;
 
 import static bricker.main.Constants.PADDLE_PATH;
 

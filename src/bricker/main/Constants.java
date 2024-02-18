@@ -2,6 +2,9 @@ package bricker.main;
 
 import danogl.util.Vector2;
 
+/**
+ * A class for all constants the game manager needs
+ */
 public class Constants {
     // screen dimensions
     /**

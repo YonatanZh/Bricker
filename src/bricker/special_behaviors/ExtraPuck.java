@@ -3,7 +3,7 @@ package bricker.special_behaviors;
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
 import danogl.util.Vector2;
-import bricker.game_objects.GameObjectFactory;
+import bricker.gameobjects.GameObjectFactory;
 
 import java.util.Random;
 

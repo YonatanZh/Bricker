@@ -2,7 +2,7 @@ package bricker.main;
 
 import bricker.brick_strategies.CollisionStrategy;
 import bricker.brick_strategies.SpecialCollisionStrategy;
-import bricker.game_objects.*;
+import bricker.gameobjects.*;
 import bricker.special_behaviors.BehaviorFactory;
 import bricker.special_behaviors.SpecialBehaviors;
 import danogl.GameManager;

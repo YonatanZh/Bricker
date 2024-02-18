@@ -4,9 +4,9 @@ import danogl.GameManager;
 import danogl.collisions.GameObjectCollection;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
-import bricker.game_objects.GameObjectFactory;
-import bricker.game_objects.LifeCounter;
-import bricker.game_objects.ObjectTracker;
+import bricker.gameobjects.GameObjectFactory;
+import bricker.gameobjects.LifeCounter;
+import bricker.gameobjects.ObjectTracker;
 
 /**
  * This class is used to create the different special behaviors that can be added to the game.

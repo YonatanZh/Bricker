@@ -2,7 +2,7 @@ package bricker.special_behaviors;
 
 import danogl.GameManager;
 import danogl.util.Vector2;
-import bricker.game_objects.ObjectTracker;
+import bricker.gameobjects.ObjectTracker;
 
 import static bricker.main.Constants.CAMERA_CHANGE_MAX_COLLISIONS;
 

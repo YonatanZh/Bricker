@@ -1,11 +1,11 @@
 package bricker.special_behaviors;
 
-import bricker.game_objects.FallingLife;
+import bricker.gameobjects.FallingLife;
 import danogl.collisions.GameObjectCollection;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
-import bricker.game_objects.GameObjectFactory;
-import bricker.game_objects.LifeCounter;
+import bricker.gameobjects.GameObjectFactory;
+import bricker.gameobjects.LifeCounter;
 
 import static bricker.main.Constants.HEART_VELOCITY;
 
@@ -30,7 +30,8 @@ public class ExtraLife implements SpecialBehaviors {
      * @param gameObjectFactory the factory for creating game objects.
      */
     public ExtraLife(Vector2 dimensions, Renderable lifeImage, LifeCounter lifeCounter,
-                     Vector2 windowDimensions, GameObjectCollection gameObjects, GameObjectFactory gameObjectFactory) {
+                     Vector2 windowDimensions, GameObjectCollection gameObjects,
+                     GameObjectFactory gameObjectFactory) {
         this.dimensions = dimensions;
         this.windowDimensions = windowDimensions;
         this.gameObjects = gameObjects;

@@ -1,7 +1,7 @@
-package bricker.game_objects;
+package bricker.gameobjects;
 
 import bricker.brick_strategies.CollisionStrategy;
-import bricker.game_objects.Ball;
+import bricker.gameobjects.Ball;
 import danogl.GameObject;
 import danogl.collisions.Collision;
 import danogl.gui.UserInputListener;
@@ -41,7 +41,8 @@ public class DisappearingPaddle extends Paddle{
     }
 
     /**
-     * Called when the paddle collides with another object. Calls the collision strategy and decrements the paddle counter.
+     * Called when the paddle collides with another object.
+     * Calls the collision strategy and decrements the paddle counter.
      *
      * @param other     the object the paddle collided with.
      * @param collision the collision parameters.

@@ -24,33 +24,42 @@ yonatanzh, frumi
 
 3.  We chose to give each special behavior its own class which in turn implements the SpecialBehaviors
     interface by giving them the desired activation location. There creating the special behavior classes.
-    Allowing then to have their own unique activation logic and also to use the game objects in different ways.
-    We used composition to implements all of the behaviors adding to the behavior the needed functions to make
+    Allowing then to have their own unique activation logic and also to use the game objects in
+    different ways.
+    We used composition to implements all of the behaviors adding to the behavior the needed functions
+    to make
     the objects work as desired for it.
     Extra Puck - We only added the behavior itself as explained above.
-    it creates 2 Ball object (that are different than the main Ball of the game) and adds them to the game.
-    Each puck has the same properties as the main Ball other than location, size and image but our implementation
+    it creates 2 Ball object (that are different than the main Ball of the game) and adds them to the
+    game.
+    Each puck has the same properties as the main Ball other than location, size and image but our
+    implementation
     allowed us to use the same Ball API for this purpose as well.
     Camera Change - Other than the behavior itself we created a game object called ObjectTracker.
     Its purpose is to track an object in game. We used it to track the balls collision in order
     to remove the behavior after 4 Ball collisions.
-    Extra Life - Other than the behavior itself we created a game object called FallingLife. Its purpose is managing
-    a life falling in the game from a given location. On collision with the main paddle it will add a life to the game
+    Extra Life - Other than the behavior itself we created a game object called FallingLife. Its purpose is
+    managing
+    a life falling in the game from a given location. On collision with the main paddle it will add a life
+    to the game
     using LifeCounter.
-    Extra Paddle - Other than the behavior itself we created a game object called DisappearingPaddle. Its purpose is
+    Extra Paddle - Other than the behavior itself we created a game object called DisappearingPaddle. Its
+    purpose is
     managing another paddle that disappears after 4 collisions with any type of Ball instance.
 
 
 4. 	We've implemented DoubleBehavior's logic of activating only 3 behaviors in a recursion type of way.
     The  recursion allows for total randomization of a behavior. We also added a Counter object makes
     sure we keep the the desired amount of special behavior activations. It is a Decorator design pattern,
-    because it acts in just the same way as a "regular" special behavior, but with an added functionality. It
+    because it acts in just the same way as a "regular" special behavior, but with an added
+    functionality. It
     uses composition - as it holds SpecialBehavior objects and activates them just as it is being activated.
     We chose to implement like this because it allows polymorphism and encapsulation - its still a PowerUp
     object that the brick can hold and activate, and its implementation is of no concern to the brick. In
     addition, this design allows for a single DoubleBehavior to hold any amount of special behaviors within
     itself, and activate each one - as it holds all other behaviors.
 
-5.  In BasicCollisionStrategy we added a protected class variable - protected GameObjectCollection gameObjects.
-Because BasicCollisionStrategy needs it to remove the object from the game (that is its strategy) and also its
-inheriting class - SpecialCollisionStrategy needs it for the same reason.
+5.  In BasicCollisionStrategy we added a protected class variable - protected GameObjectCollection
+gameObjects.
+Because BasicCollisionStrategy needs it to remove the object from the game (that is its strategy)
+and also its inheriting class - SpecialCollisionStrategy needs it for the same reason.

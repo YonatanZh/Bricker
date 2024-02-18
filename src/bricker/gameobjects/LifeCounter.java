@@ -1,4 +1,4 @@
-package bricker.game_objects;
+package bricker.gameobjects;
 
 import danogl.GameObject;
 import danogl.util.Counter;
@@ -7,7 +7,8 @@ import danogl.util.Vector2;
 import static bricker.main.Constants.MAX_LIVES;
 
 /**
- * A class representing the life counter. It keeps track of the lives and updates the display when a life is lost or gained.
+ * A class representing the life counter. It keeps track of
+ * the lives and updates the display when a life is lost or gained.
  */
 public class LifeCounter extends GameObject {
     private final NumericLifeDisplay numericLifeCounter;
