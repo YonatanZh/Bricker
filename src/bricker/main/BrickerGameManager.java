@@ -148,8 +148,6 @@ public class BrickerGameManager extends GameManager {
                 allBehaviors[1], allBehaviors[2], allBehaviors[3]});
     }
 
-    //  todo: there's a problem with the spacing whenever a life is created or lost + plus the initial
-    //  spacing is off
     private void createLifeDisplay() {
         Vector2 livesTopLeftCorner = new Vector2(LIVES_INDENT_SIZE,
                 windowDimensions.y() - DROPPING_LIFE_SIZE);
@@ -166,7 +164,7 @@ public class BrickerGameManager extends GameManager {
 
         GraphicalLifeDisplay graphicalLives =
                 (GraphicalLifeDisplay) gameObjectFactory.createGraphicalLifeDisplay(
-                        livesTopLeftCorner.add(indentation),
+                        livesTopLeftCorner,
                         singleLifeDimensions, xIndentation, lives, MAX_LIVES, gameObjects());
 
         this.lifeCounter = (LifeCounter) gameObjectFactory.createLifeCounter(livesTopLeftCorner,

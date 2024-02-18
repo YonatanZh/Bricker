@@ -47,7 +47,6 @@ GraphicalLifeDisplay extends GameObject {
     private void setInitialLives() {
         for (int i = 0; i < lives.value(); i++) {
             gainLife(i);
-            this.positionForNewLife = positionForNewLife.add(new Vector2(this.indent, 0));
         }
     }
 
