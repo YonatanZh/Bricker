@@ -148,7 +148,7 @@ public class BrickerGameManager extends GameManager {
                 allBehaviors[1], allBehaviors[2], allBehaviors[3]});
     }
 
-    // todo there's a problem with the spacing whenever a life is created or lost + plus the initial
+    //  todo: there's a problem with the spacing whenever a life is created or lost + plus the initial
     //  spacing is off
     private void createLifeDisplay() {
         Vector2 livesTopLeftCorner = new Vector2(LIVES_INDENT_SIZE,

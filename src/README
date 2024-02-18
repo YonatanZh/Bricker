@@ -1,6 +1,41 @@
-yonatanzh,
-208623397,
+yonatanzh, frumi
+208623397, 318307311
 
 =============================
 =    Answers to questions   =
 =============================
+
+1.  We chose to give each brick it's own strategy for handling collisions. and giving the strategy the option
+    to change the brick's state. In this way, we can easily add new types of bricks and new types of
+    behaviors. The strategy pattern is used to encapsulate the behavior of the bricks and to allow for easy
+    extension and modification of the collision handling logic. Each brick has its own strategy, which can be
+    easily swapped which helps treat each brick as its own independent entity, that is not affected by changes
+    to other bricks. The disadvantage of this approach is that it may lead to a large number of classes if
+    there are many different types of bricks and behaviors.
+
+2. 	We chose to use three different classes for life counting. The first class is the NumericLifeCounter
+    class, which is responsible for displaying the number of lives the player has in a numeric format.
+    The second class is the GraphicLifeCounter class, which is responsible for displaying the number of lives
+    the player has using a graphical representation, i.e displaying the number of lives using the heart
+    symbol. The third class is the LifeCounter class. It holds both the NumericLifeCounter and the
+    GraphicLifeCounter (composition) and is responsible for updating the number of lives the player has. This
+    class is the upkeeper of the number of lives the player has and is the one that is in communication with
+    the game manager.
+
+3.  We chose to give each special behavior its own class which in turn implements the SpecialBehaviors
+    interface by giving them the desired activation location. There creating the special behavior classes. The
+    extra Puck behavior is created by the
+
+
+4. 	We've implemented DoubleBehavior's logic of activating only 3 behaviors in a recursion type of way.
+    The  recursion allows for total randomization of a behavior. We also added a Counter object makes
+    sure we keep the the desired amount of special behavior activations. It is a Decorator design pattern,
+    because it acts in just the same way as a "regular" special behavior, but with an added functionality. It
+    uses composition - as it holds SpecialBehavior objects and activates them just as it is being activated.
+    We chose to implement like this because it allows polymorphism and encapsulation - its still a PowerUp
+    object that the brick can hold and activate, and its implementation is of no concern to the brick. In
+    addition, this design allows for a single DoubleBehavior to hold any amount of special behaviors within
+    itself, and activate each one - as it holds all other behaviors.
+
+5.  eden do this
+    .

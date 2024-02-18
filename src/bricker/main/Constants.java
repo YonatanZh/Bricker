@@ -199,8 +199,5 @@ public class Constants {
      */
     public static final int PUCK_SPEED = 175;
 
-
-
-
     private Constants(){}
 }
